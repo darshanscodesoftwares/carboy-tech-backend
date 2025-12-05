@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Ravi Kumar",
+    "email": "ravi.tech@carboy.com",
+    "phone": "9999990001",
+    "passwordPlain": "ravi12345",
+    "skills": ["UCI", "PDI"],
+    "status": "idle"
+  },
+  {
+    "name": "Suresh Iyer",
+    "email": "suresh.tech@carboy.com",
+    "phone": "9999990002",
+    "passwordPlain": "suresh12345",
+    "skills": ["UCI"],
+    "status": "idle"
+  }
+]

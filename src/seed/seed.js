@@ -1,0 +1,91 @@
+// Seed script for Technician Backend
+// - creates technicians with hashed passwords
+// - creates sample jobs assigned to technicians
+// - creates UCI checklist template
+//
+// Run with: npm run seed
+
+const fs = require('fs');
+const path = require('path');
+const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+const { connectDatabase } = require('../config/database');
+
+const Technician = require('../models/technician.model');
+const Job = require('../models/job.model');
+const ChecklistTemplate = require('../models/checklist.model');
+
+async function loadJson(fileName) {
+  const filePath = path.join(__dirname, fileName);
+  const raw = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(raw);
+}
+
+async function seed() {
+  await connectDatabase();
+
+  try {
+    console.log('🧹 Clearing existing collections...');
+    await Technician.deleteMany({});
+    await Job.deleteMany({});
+    await ChecklistTemplate.deleteMany({});
+
+    // 1) Seed Technicians
+    console.log('👨‍🔧 Seeding technicians...');
+    const techniciansData = await loadJson('technicians.json');
+
+    const techDocs = [];
+    for (const tech of techniciansData) {
+      const passwordHash = await bcrypt.hash(tech.passwordPlain, 10);
+
+      const doc = await Technician.create({
+        name: tech.name,
+        email: tech.email,
+        phone: tech.phone,
+        passwordHash,
+        skills: tech.skills,
+        status: tech.status
+      });
+
+      techDocs.push(doc);
+    }
+
+    // 2) Seed Jobs
+    console.log('🚗 Seeding jobs...');
+    const jobsData = await loadJson('jobs.json');
+
+    for (const job of jobsData) {
+      const assignedTech = techDocs[job.assignedToIndex]; // map index → technician doc
+
+      await Job.create({
+        serviceType: job.serviceType,
+        customerSnapshot: job.customerSnapshot,
+        vehicleSnapshot: job.vehicleSnapshot,
+        schedule: job.schedule,
+        location: job.location,
+        status: job.status,
+        technicianId: assignedTech ? assignedTech._id : null
+      });
+    }
+
+    // 3) Seed UCI Checklist Template
+    console.log('📋 Seeding UCI checklist template...');
+    const uciTemplate = await loadJson('checklist-uci.json');
+
+    await ChecklistTemplate.create({
+      serviceType: uciTemplate.serviceType,
+      items: uciTemplate.items
+    });
+
+    console.log('✅ Seed completed successfully!');
+  } catch (err) {
+    console.error('❌ Seed error:', err);
+  } finally {
+    await mongoose.connection.close();
+    console.log('🔌 MongoDB connection closed.');
+  }
+}
+
+seed();

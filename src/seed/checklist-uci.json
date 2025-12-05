@@ -1,0 +1,29 @@
+{
+  "serviceType": "UCI",
+  "items": [
+    {
+      "key": "engine_condition",
+      "label": "Engine condition",
+      "options": ["Normal", "Minor repaired", "Major repaired", "Damage found"],
+      "requiresPhoto": true
+    },
+    {
+      "key": "exterior_body",
+      "label": "Exterior body",
+      "options": ["Good", "Scratches", "Dents", "Repainted"],
+      "requiresPhoto": true
+    },
+    {
+      "key": "tyre_condition",
+      "label": "Tyre condition",
+      "options": ["New", "Good", "Worn", "Needs replacement"],
+      "requiresPhoto": false
+    },
+    {
+      "key": "brake_performance",
+      "label": "Brake performance",
+      "options": ["Good", "Average", "Poor"],
+      "requiresPhoto": false
+    }
+  ]
+}
