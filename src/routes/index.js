@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/', require('./technician.routes'));
+// technician routes
+router.use('/technician', require('./technician.routes'));
 
 module.exports = router;
