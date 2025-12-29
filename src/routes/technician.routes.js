@@ -39,4 +39,7 @@ router.post('/jobs/:jobId/checkpoints', authTechnician, jobController.submitChec
 router.post('/jobs/:jobId/complete', authTechnician, jobController.completeInspection);
 router.get('/jobs/:jobId/completed-summary', authTechnician, jobController.completedSummary);
 
+// Reopen inspection for editing
+router.post('/jobs/:jobId/reopen', authTechnician, jobController.reopenInspection);
+
 module.exports = router;

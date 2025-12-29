@@ -40,7 +40,13 @@ module.exports = {
   // get checklist from template
   async getChecklist(jobId) {
     const job = await jobRepository.findById(jobId);
-    return checklistRepository.findByService(job.serviceType);
+    const template = await checklistRepository.findByService(job.serviceType);
+
+    // Return template with existing answers merged in
+    return {
+      ...template,
+      existingAnswers: job.checklistAnswers || []
+    };
   },
 
   // submit answer
@@ -77,18 +83,43 @@ module.exports = {
   async completeInspection(jobId, reportData) {
     const job = await jobRepository.findById(jobId);
 
-    // create report
-    const report = await inspectionRepository.create({
-      jobId,
-      technicianId: job.technicianId,
-      ...reportData
-    });
+    // create or update report
+    let report = await inspectionRepository.findByJob(jobId);
 
-    // update job status
+    if (report) {
+      // Update existing report
+      report = await inspectionRepository.update(report._id, {
+        ...reportData,
+        checklistAnswers: job.checklistAnswers
+      });
+    } else {
+      // Create new report
+      report = await inspectionRepository.create({
+        jobId,
+        technicianId: job.technicianId,
+        checklistAnswers: job.checklistAnswers,
+        ...reportData
+      });
+    }
+
+    // update job status to completed
     await jobRepository.updateStatus(jobId, 'completed');
     await technicianRepository.updateStatus(job.technicianId, 'completed');
 
     return report;
+  },
+
+  // reopen inspection for editing
+  async reopenInspection(jobId) {
+    const job = await jobRepository.findById(jobId);
+
+    if (!job) throw new Error("Job not found");
+
+    // Change status back to in_inspection to allow editing
+    await jobRepository.updateStatus(jobId, 'in_inspection');
+    await technicianRepository.updateStatus(job.technicianId, 'in_inspection');
+
+    return job;
   },
 
   // summary

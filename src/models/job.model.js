@@ -68,7 +68,8 @@ const JobSchema = new mongoose.Schema({
     checkpointKey: String,
     selectedOption: String,
     notes: String,
-    photoUrl: String
+    photoUrl: String,          // single photo (for backward compatibility)
+    photoUrls: [String]         // multiple photos (for multi-image uploads)
   }]
 }, {
   timestamps: true

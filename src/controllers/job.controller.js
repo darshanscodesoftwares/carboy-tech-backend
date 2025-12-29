@@ -118,5 +118,16 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+
+  // Reopen inspection for editing
+  async reopenInspection(req, res, next) {
+    try {
+      const jobId = req.params.jobId;
+      const job = await jobService.reopenInspection(jobId);
+      return response.success(res, job);
+    } catch (err) {
+      next(err);
+    }
   }
 };
