@@ -94,7 +94,7 @@ async function seed() {
 
     await ChecklistTemplate.create({
       serviceType: pdiTemplate.serviceType,
-      items: pdiTemplate.items,
+      sections: pdiTemplate.sections,
     });
 
     console.log('✅ Seed completed successfully!');
