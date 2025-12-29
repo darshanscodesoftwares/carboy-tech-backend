@@ -42,11 +42,57 @@ module.exports = {
     const job = await jobRepository.findById(jobId);
     const template = await checklistRepository.findByService(job.serviceType);
 
-    // Return template with existing answers merged in
-    return {
-      ...template,
-      existingAnswers: job.checklistAnswers || []
-    };
+    // Return correct structure based on service type
+    // UCI: { serviceType, items, existingAnswers }
+    // PDI: { serviceType, sections, existingAnswers }
+    if (template.serviceType === 'UCI') {
+      return {
+        serviceType: template.serviceType,
+        items: template.items || [],
+        existingAnswers: job.checklistAnswers || []
+      };
+    } else if (template.serviceType === 'PDI') {
+      // Clone sections to avoid mutating the template
+      const sections = JSON.parse(JSON.stringify(template.sections || []));
+
+      // Fetch technician data if assigned
+      let technicianName = 'Technician';
+      if (job.technicianId) {
+        const technician = await technicianRepository.findById(job.technicianId);
+        if (technician && technician.name) {
+          technicianName = technician.name;
+        }
+      }
+
+      // Get location address
+      let locationAddress = 'Location';
+      if (job.location && job.location.address) {
+        locationAddress = job.location.address;
+      }
+
+      // Inject dynamic options for technician_name and location
+      sections.forEach(section => {
+        section.items.forEach(item => {
+          if (item.key === 'technician_name') {
+            item.options = [technicianName];
+          } else if (item.key === 'location') {
+            item.options = [locationAddress];
+          }
+        });
+      });
+
+      return {
+        serviceType: template.serviceType,
+        sections: sections,
+        existingAnswers: job.checklistAnswers || []
+      };
+    } else {
+      // VSH or other service types - return as-is with existing answers
+      return {
+        ...template,
+        existingAnswers: job.checklistAnswers || []
+      };
+    }
   },
 
   // submit answer
