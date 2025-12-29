@@ -11,12 +11,27 @@ const ChecklistTemplateSchema = new mongoose.Schema({
     required: true
   },
 
-  // array of checkpoint items
+  // array of checkpoint items (used for UCI, VSH - flat structure)
   items: [{
     key: { type: String, required: true },      // id used in submission
     label: { type: String, required: true },    // display text
+    inputType: { type: String },                // text, textarea, radio, dropdown, image, multi-image
     options: [{ type: String }],                // choices
-    requiresPhoto: { type: Boolean, default: false } // some checkpoints need photo
+    requiresPhoto: { type: Boolean, default: false }, // some checkpoints need photo
+    allowMultiplePhotos: { type: Boolean, default: false } // for multi-image uploads
+  }],
+
+  // sections-based structure (used for PDI - organized by sections)
+  sections: [{
+    section: { type: String, required: true },  // section name
+    items: [{
+      key: { type: String, required: true },    // id used in submission
+      label: { type: String, required: true },  // display text
+      inputType: { type: String, required: true }, // text, textarea, radio, dropdown, image, multi-image
+      options: [{ type: String }],              // choices for radio/dropdown
+      requiresPhoto: { type: Boolean, default: false }, // some checkpoints need photo
+      allowMultiplePhotos: { type: Boolean, default: false } // for multi-image uploads
+    }]
   }]
 }, {
   timestamps: true
