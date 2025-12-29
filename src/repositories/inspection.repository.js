@@ -14,5 +14,14 @@ module.exports = {
   // find report by job
   async findByJob(jobId) {
     return InspectionReport.findOne({ jobId }).lean();
+  },
+
+  // update report
+  async update(reportId, data) {
+    return InspectionReport.findByIdAndUpdate(
+      reportId,
+      data,
+      { new: true }
+    ).lean();
   }
 };
