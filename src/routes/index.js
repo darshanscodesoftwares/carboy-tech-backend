@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-// technician routes
+// AUTH ROUTES
+router.use('/auth', require('./auth.routes'));
+
+// JOB ROUTES
+router.use('/jobs', require('./job.routes'));
+
+// TECHNICIAN ROUTES
 router.use('/technician', require('./technician.routes'));
 
 module.exports = router;

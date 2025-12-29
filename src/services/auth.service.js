@@ -30,7 +30,8 @@ module.exports = {
         id: tech._id,
         name: tech.name,
         email: tech.email,
-        phone: tech.phone
+        phone: tech.phone,
+        employeeId: tech.employeeId || 'TECH-' + tech._id.toString().slice(-4)
       }
     };
   }

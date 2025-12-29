@@ -1,0 +1,35 @@
+{
+  "serviceType": "PDI",
+  "items": [
+    {
+      "key": "odometer_reading",
+      "label": "Odometer Reading",
+      "options": ["0 – 10 km", "10 – 20 km", "20 – 30 km", "30+ km"],
+      "requiresPhoto": false
+    },
+    {
+      "key": "battery_health",
+      "label": "Battery Health",
+      "options": ["Excellent", "Good", "Weak", "Needs Replacement"],
+      "requiresPhoto": true
+    },
+    {
+      "key": "fluid_levels",
+      "label": "Fluid Levels",
+      "options": ["Optimal", "Slightly Low", "Low", "Critical"],
+      "requiresPhoto": false
+    },
+    {
+      "key": "exterior_inspection",
+      "label": "Exterior Inspection",
+      "options": ["Clean", "Dusty", "Minor Damage", "Major Damage"],
+      "requiresPhoto": true
+    },
+    {
+      "key": "interior_quality",
+      "label": "Interior Quality",
+      "options": ["Excellent", "Good", "Average", "Poor"],
+      "requiresPhoto": false
+    }
+  ]
+}

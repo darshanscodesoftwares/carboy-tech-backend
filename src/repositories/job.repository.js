@@ -1,34 +1,32 @@
 // Job Repository
-// Responsible for Job CRUD and status updates.
-// Service layer uses these methods; DB queries are hidden here.
+// Clean, document-based, supports save().
+// No `.lean()` anywhere for write operations.
 
 const Job = require('../models/job.model');
 
 module.exports = {
 
-  // create a job (used by admin/customer later)
+  // create job
   async create(data) {
-    const job = await Job.create(data);
-    return job.toObject();
+    return Job.create(data); // returns document
   },
 
-  // find job by ID
+  // find job by ID (editable document)
   async findById(id) {
-    return Job.findById(id).lean();
+    return Job.findById(id); // DO NOT LEAN
   },
 
-  // list jobs assigned to a technician
+  // list jobs (read-only -> lean OK)
   async findByTechnician(technicianId, status) {
     const query = { technicianId };
-    if (status) {
-      query.status = status;
-    }
+    if (status) query.status = status;
+
     return Job.find(query)
       .sort({ createdAt: -1 })
-      .lean();
+      .lean(); // lean allowed because read only
   },
 
-  // update job status
+  // update status (lean ok because nothing to save again)
   async updateStatus(jobId, status) {
     return Job.findByIdAndUpdate(
       jobId,
@@ -37,7 +35,7 @@ module.exports = {
     ).lean();
   },
 
-  // accept job
+  // technician accepts job
   async assignTechnician(jobId, technicianId) {
     return Job.findByIdAndUpdate(
       jobId,
@@ -46,12 +44,8 @@ module.exports = {
     ).lean();
   },
 
-  // add checkpoint answers (MVP/soft implementation)
-  async addCheckpointAnswer(jobId, answer) {
-    return Job.findByIdAndUpdate(
-      jobId,
-      { $push: { checklistAnswers: answer } },
-      { new: true }
-    ).lean();
+  // REMOVE $push — we manually update inside service
+  async save(job) {
+    return job.save(); // direct mongoose save
   }
 };

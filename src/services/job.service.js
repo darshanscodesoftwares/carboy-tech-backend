@@ -45,7 +45,32 @@ module.exports = {
 
   // submit answer
   async submitCheckpoint(jobId, answer) {
-    return jobRepository.addCheckpointAnswer(jobId, answer);
+    const job = await jobRepository.findById(jobId);
+
+    if (!job) throw new Error("Job not found");
+
+    if (!job.checklistAnswers) {
+      job.checklistAnswers = [];
+    }
+
+    // Check if checkpoint already exists
+    const index = job.checklistAnswers.findIndex(
+      item => item.checkpointKey === answer.checkpointKey
+    );
+
+    if (index !== -1) {
+      // UPDATE existing checkpoint
+      job.checklistAnswers[index] = {
+        ...job.checklistAnswers[index],
+        ...answer
+      };
+    } else {
+      // ADD new checkpoint
+      job.checklistAnswers.push(answer);
+    }
+
+    const saved = await jobRepository.save(job);
+    return saved;
   },
 
   // complete inspection

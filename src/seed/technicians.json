@@ -12,7 +12,7 @@
     "email": "suresh.tech@carboy.com",
     "phone": "9999990002",
     "passwordPlain": "suresh12345",
-    "skills": ["UCI"],
+    "skills": ["UCI", "PDI"],
     "status": "idle"
   }
 ]
