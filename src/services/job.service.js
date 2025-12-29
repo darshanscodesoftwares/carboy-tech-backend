@@ -42,11 +42,28 @@ module.exports = {
     const job = await jobRepository.findById(jobId);
     const template = await checklistRepository.findByService(job.serviceType);
 
-    // Return template with existing answers merged in
-    return {
-      ...template,
-      existingAnswers: job.checklistAnswers || []
-    };
+    // Return correct structure based on service type
+    // UCI: { serviceType, items, existingAnswers }
+    // PDI: { serviceType, sections, existingAnswers }
+    if (template.serviceType === 'UCI') {
+      return {
+        serviceType: template.serviceType,
+        items: template.items || [],
+        existingAnswers: job.checklistAnswers || []
+      };
+    } else if (template.serviceType === 'PDI') {
+      return {
+        serviceType: template.serviceType,
+        sections: template.sections || [],
+        existingAnswers: job.checklistAnswers || []
+      };
+    } else {
+      // VSH or other service types - return as-is with existing answers
+      return {
+        ...template,
+        existingAnswers: job.checklistAnswers || []
+      };
+    }
   },
 
   // submit answer
