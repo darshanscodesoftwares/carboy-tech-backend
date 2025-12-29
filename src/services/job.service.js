@@ -52,9 +52,38 @@ module.exports = {
         existingAnswers: job.checklistAnswers || []
       };
     } else if (template.serviceType === 'PDI') {
+      // Clone sections to avoid mutating the template
+      const sections = JSON.parse(JSON.stringify(template.sections || []));
+
+      // Fetch technician data if assigned
+      let technicianName = 'Technician';
+      if (job.technicianId) {
+        const technician = await technicianRepository.findById(job.technicianId);
+        if (technician && technician.name) {
+          technicianName = technician.name;
+        }
+      }
+
+      // Get location address
+      let locationAddress = 'Location';
+      if (job.location && job.location.address) {
+        locationAddress = job.location.address;
+      }
+
+      // Inject dynamic options for technician_name and location
+      sections.forEach(section => {
+        section.items.forEach(item => {
+          if (item.key === 'technician_name') {
+            item.options = [technicianName];
+          } else if (item.key === 'location') {
+            item.options = [locationAddress];
+          }
+        });
+      });
+
       return {
         serviceType: template.serviceType,
-        sections: template.sections || [],
+        sections: sections,
         existingAnswers: job.checklistAnswers || []
       };
     } else {
