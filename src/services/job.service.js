@@ -16,7 +16,6 @@ module.exports = {
 
   // accept job
   async acceptJob(jobId, technicianId) {
-    // update job and technician status
     const job = await jobRepository.assignTechnician(jobId, technicianId);
     await technicianRepository.updateStatus(technicianId, 'assigned');
     return job;
@@ -30,168 +29,166 @@ module.exports = {
   // update status
   async updateStatus(jobId, status) {
     const job = await jobRepository.updateStatus(jobId, status);
-
-    // update technician status
     await technicianRepository.updateStatus(job.technicianId, status);
-
     return job;
   },
 
-  // get checklist from template
+  // =====================================================
+  // GET CHECKLIST (FIXED – SAVED VALUES ARE MERGED BACK)
+  // =====================================================
   async getChecklist(jobId) {
     const job = await jobRepository.findById(jobId);
     const template = await checklistRepository.findByService(job.serviceType);
 
-    // Return correct structure based on service type
-    // UCI: { serviceType, items, existingAnswers }
-    // PDI: { serviceType, sections, existingAnswers }
+    if (!job || !template) return template;
+
+    // Map saved answers by checkpointKey
+    const answersMap = {};
+    (job.checklistAnswers || []).forEach(ans => {
+      answersMap[ans.checkpointKey] = ans;
+    });
+
+    // =========================
+    // UCI CHECKLIST (FLAT)
+    // =========================
     if (template.serviceType === 'UCI') {
+      const items = (template.items || []).map(item => {
+        const saved = answersMap[item.key];
+        return {
+          ...item,
+          selectedOption: saved?.selectedOption ?? null,
+          value: saved?.value ?? null,
+          notes: saved?.notes ?? null,
+          photoUrl: saved?.photoUrl ?? null,
+          photoUrls: saved?.photoUrls ?? null
+        };
+      });
+
       return {
         serviceType: template.serviceType,
-        items: template.items || [],
-        existingAnswers: job.checklistAnswers || []
+        items
       };
-    } else if (template.serviceType === 'PDI') {
-      // Clone sections to avoid mutating the template
+    }
+
+    // =========================
+    // PDI CHECKLIST (SECTIONS)
+    // =========================
+    if (template.serviceType === 'PDI') {
       const sections = JSON.parse(JSON.stringify(template.sections || []));
 
-      // Fetch technician data if assigned
+      // Technician name
       let technicianName = 'Technician';
       if (job.technicianId) {
         const technician = await technicianRepository.findById(job.technicianId);
-        if (technician && technician.name) {
-          technicianName = technician.name;
-        }
+        if (technician?.name) technicianName = technician.name;
       }
 
-      // Get location address
+      // Location
       let locationAddress = 'Location';
-      if (job.location && job.location.address) {
-        locationAddress = job.location.address;
-      }
+      if (job.location?.address) locationAddress = job.location.address;
 
-      // Inject dynamic options for technician_name and location
       sections.forEach(section => {
         section.items.forEach(item => {
+
+          // Inject dropdown options dynamically
           if (item.key === 'technician_name') {
             item.options = [technicianName];
-          } else if (item.key === 'location') {
+          }
+
+          if (item.key === 'location') {
             item.options = [locationAddress];
+          }
+
+          // 🔑 MERGE SAVED VALUES INTO ITEM
+          const saved = answersMap[item.key];
+          if (saved) {
+            item.selectedOption = saved.selectedOption ?? null;
+            item.value = saved.value ?? null;
+            item.notes = saved.notes ?? null;
+            item.photoUrl = saved.photoUrl ?? null;
+            item.photoUrls = saved.photoUrls ?? null;
           }
         });
       });
 
       return {
         serviceType: template.serviceType,
-        sections: sections,
-        existingAnswers: job.checklistAnswers || []
-      };
-    } else {
-      // VSH or other service types - return as-is with existing answers
-      return {
-        ...template,
-        existingAnswers: job.checklistAnswers || []
+        sections
       };
     }
+
+    return template;
   },
 
-  // submit answer
+  // =====================================================
+  // SAVE / UPDATE CHECKPOINT ANSWER
+  // =====================================================
   async submitCheckpoint(jobId, answer) {
     const job = await jobRepository.findById(jobId);
-
     if (!job) throw new Error("Job not found");
 
-    if (!job.checklistAnswers) {
-      job.checklistAnswers = [];
-    }
+    if (!job.checklistAnswers) job.checklistAnswers = [];
 
-    // Check if checkpoint already exists
     const index = job.checklistAnswers.findIndex(
       item => item.checkpointKey === answer.checkpointKey
     );
 
     if (index !== -1) {
-      // UPDATE existing checkpoint
       job.checklistAnswers[index] = {
         ...job.checklistAnswers[index],
         ...answer
       };
     } else {
-      // ADD new checkpoint
       job.checklistAnswers.push(answer);
     }
 
-    const saved = await jobRepository.save(job);
-    return saved;
+    return jobRepository.save(job);
   },
 
-  // complete inspection
+  // =====================================================
+  // COMPLETE INSPECTION
+  // =====================================================
   async completeInspection(jobId, reportData) {
     const job = await jobRepository.findById(jobId);
 
-    // create or update report
     let report = await inspectionRepository.findByJob(jobId);
 
     if (report) {
-      // Update existing report
       report = await inspectionRepository.update(report._id, {
         ...reportData,
-        checklistAnswers: job.checklistAnswers
+        answers: job.checklistAnswers
       });
     } else {
-      // Create new report
       report = await inspectionRepository.create({
         jobId,
         technicianId: job.technicianId,
-        checklistAnswers: job.checklistAnswers,
+        answers: job.checklistAnswers,
         ...reportData
       });
     }
 
-    // update job status to inspection_completed (editable, not sent yet)
-    await jobRepository.updateStatus(jobId, 'inspection_completed');
-    await technicianRepository.updateStatus(job.technicianId, 'inspection_completed');
+    await jobRepository.updateStatus(jobId, 'completed');
+    await technicianRepository.updateStatus(job.technicianId, 'completed');
 
     return report;
   },
 
-  // send report to admin (final submission)
-  async sendReport(jobId) {
-    const job = await jobRepository.findById(jobId);
-
-    if (!job) throw new Error("Job not found");
-
-    // Only allow sending if inspection is completed but not sent yet
-    if (job.status !== 'inspection_completed') {
-      throw new Error("Cannot send report. Inspection must be completed first.");
-    }
-
-    // Mark as final - no edits allowed after this
-    await jobRepository.updateStatus(jobId, 'report_sent');
-    await technicianRepository.updateStatus(job.technicianId, 'report_sent');
-
-    return job;
-  },
-
-  // reopen inspection for editing
+  // =====================================================
+  // REOPEN INSPECTION
+  // =====================================================
   async reopenInspection(jobId) {
     const job = await jobRepository.findById(jobId);
-
     if (!job) throw new Error("Job not found");
 
-    // Block editing if report has been sent to admin
-    if (job.status === 'report_sent') {
-      throw new Error("Cannot edit report. It has already been sent to admin.");
-    }
-
-    // Change status back to in_inspection to allow editing
     await jobRepository.updateStatus(jobId, 'in_inspection');
     await technicianRepository.updateStatus(job.technicianId, 'in_inspection');
 
     return job;
   },
 
-  // summary
+  // =====================================================
+  // COMPLETED SUMMARY
+  // =====================================================
   async completedSummary(jobId) {
     const job = await jobRepository.findById(jobId);
     const report = await inspectionRepository.findByJob(jobId);

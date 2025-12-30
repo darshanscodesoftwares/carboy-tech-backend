@@ -4,28 +4,24 @@
     {
       "key": "engine_condition",
       "label": "Engine condition",
-      "inputType": "radio",
       "options": ["Normal", "Minor repaired", "Major repaired", "Damage found"],
       "requiresPhoto": true
     },
     {
       "key": "exterior_body",
       "label": "Exterior body",
-      "inputType": "radio",
       "options": ["Good", "Scratches", "Dents", "Repainted"],
       "requiresPhoto": true
     },
     {
       "key": "tyre_condition",
       "label": "Tyre condition",
-      "inputType": "radio",
       "options": ["New", "Good", "Worn", "Needs replacement"],
       "requiresPhoto": false
     },
     {
       "key": "brake_performance",
       "label": "Brake performance",
-      "inputType": "radio",
       "options": ["Good", "Average", "Poor"],
       "requiresPhoto": false
     }

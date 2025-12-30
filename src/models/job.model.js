@@ -66,7 +66,8 @@ const JobSchema = new mongoose.Schema({
   // Later, we can move answers to inspection_reports document.
   checklistAnswers: [{
     checkpointKey: String,
-    selectedOption: String,
+    selectedOption: String,    // for radio/dropdown inputs
+    value: String,              // for text/textarea inputs
     notes: String,
     photoUrl: String,          // single photo (for backward compatibility)
     photoUrls: [String]         // multiple photos (for multi-image uploads)

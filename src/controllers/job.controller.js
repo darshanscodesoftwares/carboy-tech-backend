@@ -89,7 +89,7 @@ module.exports = {
   async submitCheckpoint(req, res, next) {
     try {
       const jobId = req.params.jobId;
-      const answer = req.body; // includes checkpointKey, selectedOption, notes, photoUrl
+      const answer = req.body; // includes checkpointKey, selectedOption/value, notes, photoUrl
       const job = await jobService.submitCheckpoint(jobId, answer);
       return response.success(res, job);
     } catch (err) {

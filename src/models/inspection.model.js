@@ -16,7 +16,8 @@ const InspectionReportSchema = new mongoose.Schema({
   // embedded results (MVP)
   answers: [{
     checkpointKey: String,
-    selectedOption: String,
+    selectedOption: String,    // for radio/dropdown inputs
+    value: String,              // for text/textarea inputs
     notes: String,
     photoUrl: String
   }],
