@@ -129,5 +129,16 @@ module.exports = {
     } catch (err) {
       next(err);
     }
+  },
+
+  // Send report to admin (final submission)
+  async sendReport(req, res, next) {
+    try {
+      const jobId = req.params.jobId;
+      const job = await jobService.sendReport(jobId);
+      return response.success(res, job);
+    } catch (err) {
+      next(err);
+    }
   }
 };
