@@ -148,11 +148,29 @@ module.exports = {
       });
     }
 
-    // update job status to completed
-    await jobRepository.updateStatus(jobId, 'completed');
-    await technicianRepository.updateStatus(job.technicianId, 'completed');
+    // update job status to inspection_completed (editable, not sent yet)
+    await jobRepository.updateStatus(jobId, 'inspection_completed');
+    await technicianRepository.updateStatus(job.technicianId, 'inspection_completed');
 
     return report;
+  },
+
+  // send report to admin (final submission)
+  async sendReport(jobId) {
+    const job = await jobRepository.findById(jobId);
+
+    if (!job) throw new Error("Job not found");
+
+    // Only allow sending if inspection is completed but not sent yet
+    if (job.status !== 'inspection_completed') {
+      throw new Error("Cannot send report. Inspection must be completed first.");
+    }
+
+    // Mark as final - no edits allowed after this
+    await jobRepository.updateStatus(jobId, 'report_sent');
+    await technicianRepository.updateStatus(job.technicianId, 'report_sent');
+
+    return job;
   },
 
   // reopen inspection for editing
@@ -160,6 +178,11 @@ module.exports = {
     const job = await jobRepository.findById(jobId);
 
     if (!job) throw new Error("Job not found");
+
+    // Block editing if report has been sent to admin
+    if (job.status === 'report_sent') {
+      throw new Error("Cannot edit report. It has already been sent to admin.");
+    }
 
     // Change status back to in_inspection to allow editing
     await jobRepository.updateStatus(jobId, 'in_inspection');

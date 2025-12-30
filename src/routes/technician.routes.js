@@ -42,4 +42,7 @@ router.get('/jobs/:jobId/completed-summary', authTechnician, jobController.compl
 // Reopen inspection for editing
 router.post('/jobs/:jobId/reopen', authTechnician, jobController.reopenInspection);
 
+// Send report to admin (final submission)
+router.post('/jobs/:jobId/send-report', authTechnician, jobController.sendReport);
+
 module.exports = router;
