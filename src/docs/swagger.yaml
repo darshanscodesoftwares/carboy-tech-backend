@@ -191,6 +191,11 @@ paths:
                 selectedOption:
                   type: string
                   example: Normal
+                  description: For radio/dropdown inputs
+                value:
+                  type: string
+                  example: ABC123XYZ
+                  description: For text/textarea inputs
                 notes:
                   type: string
                   example: Everything looks fine.
