@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 
 // ------------------------
-// CORS CONFIG (FIXED FOR LOCAL + RENDER)
+// CORS CONFIG (EXPRESS 5 SAFE)
 // ------------------------
 const allowedOrigins = [
   'http://localhost:5173',
@@ -11,23 +11,20 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (Postman, mobile apps, etc.)
+  origin: (origin, callback) => {
+    // allow server-to-server, Postman, mobile apps
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
     }
-  },
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
 
-// Explicitly handle preflight requests
-app.options('*', cors());
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // ------------------------
 // JSON Parsing
