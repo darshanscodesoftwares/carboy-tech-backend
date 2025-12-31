@@ -4,33 +4,75 @@
     {
       "section": "Vehicle & Customer Details",
       "items": [
-        { "key": "car_front_image", "label": "Car Front Image", "inputType": "image" },
-        { "key": "customer_name", "label": "Customer Name", "inputType": "text" },
+        {
+          "key": "car_front_image",
+          "label": "Car Front Image",
+          "inputType": "image"
+        },
+        {
+          "key": "customer_name",
+          "label": "Customer Name",
+          "inputType": "text"
+        },
         { "key": "transmission", "label": "Transmission", "inputType": "text" },
         { "key": "vin_number", "label": "VIN Number", "inputType": "text" },
-        { "key": "inspection_date", "label": "Inspection Date", "inputType": "text" },
-        { "key": "current_odometer_reading", "label": "Current Odometer Reading", "inputType": "text" },
+        {
+          "key": "inspection_date",
+          "label": "Inspection Date",
+          "inputType": "text"
+        },
+        {
+          "key": "current_odometer_reading",
+          "label": "Current Odometer Reading",
+          "inputType": "text"
+        },
         {
           "key": "fuel_type",
           "label": "Fuel Type",
           "inputType": "select",
           "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"]
         },
-        { "key": "car_registration_number", "label": "Car Registration Number", "inputType": "text" },
-        { "key": "make_model_year", "label": "Make & Model (with year)", "inputType": "text" },
-        { "key": "ratings_out_of_10", "label": "Ratings out of 10", "inputType": "rating" },
-        { "key": "report_summary_highlights", "label": "Report Summary Highlights", "inputType": "text" }
+        {
+          "key": "car_registration_number",
+          "label": "Car Registration Number",
+          "inputType": "text"
+        },
+        {
+          "key": "make_model_year",
+          "label": "Make & Model (with year)",
+          "inputType": "text"
+        },
+        {
+          "key": "ratings_out_of_10",
+          "label": "Ratings out of 10",
+          "inputType": "select",
+          "options": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+        },
+        {
+          "key": "report_summary_highlights",
+          "label": "Report Summary Highlights",
+          "inputType": "text"
+        }
       ]
     },
     {
       "section": "Engine Cabin",
       "items": [
-        { "key": "engine_cabin_image", "label": "Engine Cabin Image", "inputType": "image" },
+        {
+          "key": "engine_cabin_image",
+          "label": "Engine Cabin Image",
+          "inputType": "image"
+        },
         {
           "key": "engine_physical_condition",
           "label": "Engine Physical Condition",
           "inputType": "select",
-          "options": ["Normal", "Minor repaired", "Major repaired", "Damage found"]
+          "options": [
+            "Normal",
+            "Minor repaired",
+            "Major repaired",
+            "Damage found"
+          ]
         },
         {
           "key": "engine_oil_condition",
@@ -38,79 +80,173 @@
           "inputType": "select",
           "options": ["Normal", "Dirty", "Low level"]
         },
-        { "key": "engine_oil_level_image", "label": "Engine Oil Level Image", "inputType": "image" },
+        {
+          "key": "engine_oil_level_image",
+          "label": "Engine Oil Level Image",
+          "inputType": "image"
+        },
         {
           "key": "coolant_condition",
           "label": "Coolant",
           "inputType": "select",
-          "options": ["Normal", "Dirty", "Oil mix", "Dry", "Low level", "Only water inside"]
+          "options": [
+            "Normal",
+            "Dirty",
+            "Oil mix",
+            "Dry",
+            "Low level",
+            "Only water inside"
+          ]
         },
-        { "key": "radiator_cap_opened_image", "label": "Radiator Cap Opened", "inputType": "image" },
+        {
+          "key": "radiator_cap_opened_image",
+          "label": "Radiator Cap Opened",
+          "inputType": "image"
+        },
         {
           "key": "battery_condition",
           "label": "Battery Condition",
           "inputType": "select",
           "options": ["Weak", "Normal", "Need to recharge"]
         },
-        { "key": "battery_photo", "label": "Battery Photo", "inputType": "image" },
+        {
+          "key": "battery_photo",
+          "label": "Battery Photo",
+          "inputType": "image"
+        },
         {
           "key": "fuel_injector",
           "label": "Fuel Injector",
           "inputType": "select",
-          "options": ["Normal", "Noise", "Fuel leak", "Possibilities repair in future"]
+          "options": [
+            "Normal",
+            "Noise",
+            "Fuel leak",
+            "Possibilities repair in future"
+          ]
         },
-        { "key": "injector_plug_image", "label": "Injector / Plug Image", "inputType": "image" },
+        {
+          "key": "injector_plug_image",
+          "label": "Injector / Plug Image",
+          "inputType": "image"
+        },
         {
           "key": "left_apron",
           "label": "Left Apron",
           "inputType": "select",
-          "options": ["Normal", "Repaired", "Minor rust", "Metal eaten rust (critical)", "Replace", "Painted extra"]
+          "options": [
+            "Normal",
+            "Repaired",
+            "Minor rust",
+            "Metal eaten rust (critical)",
+            "Replace",
+            "Painted extra"
+          ]
         },
-        { "key": "left_apron_image", "label": "Left Apron Image", "inputType": "image" },
+        {
+          "key": "left_apron_image",
+          "label": "Left Apron Image",
+          "inputType": "image"
+        },
         {
           "key": "left_apron_leg",
           "label": "Left Apron Leg",
           "inputType": "select",
-          "options": ["Normal", "Repaired", "Minor rust", "Metal eaten rust (critical)", "Replace", "Painted extra"]
+          "options": [
+            "Normal",
+            "Repaired",
+            "Minor rust",
+            "Metal eaten rust (critical)",
+            "Replace",
+            "Painted extra"
+          ]
         },
-        { "key": "left_apron_leg_image", "label": "Left Apron Leg Image", "inputType": "image" },
+        {
+          "key": "left_apron_leg_image",
+          "label": "Left Apron Leg Image",
+          "inputType": "image"
+        },
         {
           "key": "right_apron",
           "label": "Right Apron",
           "inputType": "select",
-          "options": ["Normal", "Repaired", "Minor rust", "Metal eaten rust (critical)", "Replace", "Painted extra"]
+          "options": [
+            "Normal",
+            "Repaired",
+            "Minor rust",
+            "Metal eaten rust (critical)",
+            "Replace",
+            "Painted extra"
+          ]
         },
-        { "key": "right_apron_image", "label": "Right Apron Image", "inputType": "image" },
+        {
+          "key": "right_apron_image",
+          "label": "Right Apron Image",
+          "inputType": "image"
+        },
         {
           "key": "right_apron_leg",
           "label": "Right Apron Leg",
           "inputType": "select",
-          "options": ["Normal", "Repaired", "Minor rust", "Metal eaten rust (critical)", "Replace", "Painted extra"]
+          "options": [
+            "Normal",
+            "Repaired",
+            "Minor rust",
+            "Metal eaten rust (critical)",
+            "Replace",
+            "Painted extra"
+          ]
         },
-        { "key": "right_apron_leg_image", "label": "Right Apron Leg Image", "inputType": "image" },
+        {
+          "key": "right_apron_leg_image",
+          "label": "Right Apron Leg Image",
+          "inputType": "image"
+        },
         {
           "key": "upper_cross_member",
           "label": "Upper Cross Member",
           "inputType": "select",
-          "options": ["Normal", "Repaired", "Minor rust", "Metal eaten rust (critical)", "Replace", "Painted extra"]
+          "options": [
+            "Normal",
+            "Repaired",
+            "Minor rust",
+            "Metal eaten rust (critical)",
+            "Replace",
+            "Painted extra"
+          ]
         },
         {
           "key": "lower_cross_member",
           "label": "Lower Cross Member",
           "inputType": "select",
-          "options": ["Normal", "Repaired", "Minor rust", "Metal eaten rust (critical)", "Replace", "Painted extra"]
+          "options": [
+            "Normal",
+            "Repaired",
+            "Minor rust",
+            "Metal eaten rust (critical)",
+            "Replace",
+            "Painted extra"
+          ]
         },
         {
           "key": "radiator_and_support",
           "label": "Radiator and Support",
           "inputType": "select",
-          "options": ["Normal", "Damaged / leak", "Radiator shaken, need to fix"]
+          "options": [
+            "Normal",
+            "Damaged / leak",
+            "Radiator shaken, need to fix"
+          ]
         },
         {
           "key": "radiator_fan",
           "label": "Radiator Fan",
           "inputType": "select",
-          "options": ["Normal", "Radiator fan not working", "Radiator fan motor noise"]
+          "options": [
+            "Normal",
+            "Radiator fan not working",
+            "Radiator fan motor noise"
+          ]
         },
         {
           "key": "firewall",
@@ -140,19 +276,44 @@
           "key": "windshield",
           "label": "Windshield",
           "inputType": "select",
-          "options": ["Major scratched", "Damaged / cracked", "Replaced", "Normal"]
+          "options": [
+            "Major scratched",
+            "Damaged / cracked",
+            "Replaced",
+            "Normal"
+          ]
         },
         {
           "key": "bonnet",
           "label": "Bonnet",
           "inputType": "select",
-          "options": ["Normal", "Major scratched", "Minor dent", "Major dent", "Rusted", "Repainted", "Repaired", "Replaced", "Faded/paint mis-match"]
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Rusted",
+            "Repainted",
+            "Repaired",
+            "Replaced",
+            "Faded/paint mis-match"
+          ]
         },
         {
           "key": "front_bumper",
           "label": "Front Bumper",
           "inputType": "select",
-          "options": ["Normal", "Major scratched", "Minor dent", "Major dent", "Cracked/broken", "Repainted", "Repaired", "Replaced", "Faded/paint mis-match"]
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Cracked/broken",
+            "Repainted",
+            "Repaired",
+            "Replaced",
+            "Faded/paint mis-match"
+          ]
         },
         {
           "key": "headlight_left",
@@ -170,13 +331,25 @@
           "key": "fog_lamp_right",
           "label": "Fog Lamp Right",
           "inputType": "select",
-          "options": ["Normal", "Damaged", "Missing", "Not working", "Not available"]
+          "options": [
+            "Normal",
+            "Damaged",
+            "Missing",
+            "Not working",
+            "Not available"
+          ]
         },
         {
           "key": "fog_lamp_left",
           "label": "Fog Lamp Left",
           "inputType": "select",
-          "options": ["Normal", "Damaged", "Missing", "Not working", "Not available"]
+          "options": [
+            "Normal",
+            "Damaged",
+            "Missing",
+            "Not working",
+            "Not available"
+          ]
         },
         {
           "key": "front_bumper_grill",
@@ -184,9 +357,21 @@
           "inputType": "select",
           "options": ["Normal", "Scratched", "Damaged", "Repaired"]
         },
-        { "key": "front_left_tyre_thickness", "label": "Front Left Tyre Thickness", "inputType": "image" },
-        { "key": "front_right_tyre_thickness", "label": "Front Right Tyre Thickness", "inputType": "image" },
-        { "key": "car_left_image", "label": "Car Left Image", "inputType": "image" }
+        {
+          "key": "front_left_tyre_thickness",
+          "label": "Front Left Tyre Thickness",
+          "inputType": "image"
+        },
+        {
+          "key": "front_right_tyre_thickness",
+          "label": "Front Right Tyre Thickness",
+          "inputType": "image"
+        },
+        {
+          "key": "car_left_image",
+          "label": "Car Left Image",
+          "inputType": "image"
+        }
       ]
     },
     {
@@ -204,7 +389,11 @@
             "Rear left not working/switch broken"
           ]
         },
-        { "key": "power_window_remarks", "label": "Power Window Remarks", "inputType": "text" },
+        {
+          "key": "power_window_remarks",
+          "label": "Power Window Remarks",
+          "inputType": "text"
+        },
         {
           "key": "orvm_switch",
           "label": "ORVM Switch",
@@ -223,7 +412,11 @@
           "inputType": "select",
           "options": ["Visual check normal"]
         },
-        { "key": "cluster_meter_image", "label": "Cluster Meter Image", "inputType": "image" },
+        {
+          "key": "cluster_meter_image",
+          "label": "Cluster Meter Image",
+          "inputType": "image"
+        },
         {
           "key": "music_system",
           "label": "Music System",
@@ -237,7 +430,11 @@
             "Audio system not working"
           ]
         },
-        { "key": "music_system_remarks", "label": "Music System Remarks", "inputType": "text" },
+        {
+          "key": "music_system_remarks",
+          "label": "Music System Remarks",
+          "inputType": "text"
+        },
         {
           "key": "horn",
           "label": "Horn",
@@ -282,13 +479,22 @@
           "key": "sunroof",
           "label": "Sunroof",
           "inputType": "select",
-          "options": ["Working Normal", "Not available", "Noise while operating"]
+          "options": [
+            "Working Normal",
+            "Not available",
+            "Noise while operating"
+          ]
         },
         {
           "key": "steering_wheel_mount_buttons",
           "label": "Steering Wheel Mount Buttons",
           "inputType": "select",
-          "options": ["Working Normal", "Not available", "Not working", "Damaged"]
+          "options": [
+            "Working Normal",
+            "Not available",
+            "Not working",
+            "Damaged"
+          ]
         },
         {
           "key": "rear_defogger",
@@ -322,8 +528,17 @@
             "Direction mode not working"
           ]
         },
-        { "key": "ac_temp_check", "label": "AC Temp Check", "inputType": "image" },
-        { "key": "interior_images", "label": "Interior Images", "inputType": "multi_image" }
+        {
+          "key": "ac_temp_check",
+          "label": "AC Temp Check",
+          "inputType": "image"
+        },
+        {
+          "key": "interior_images",
+          "label": "Interior Images",
+          "inputType": "multi-image",
+          "requiresPhoto": true
+        }
       ]
     },
     {
@@ -333,7 +548,13 @@
           "key": "clutch",
           "label": "Clutch",
           "inputType": "select",
-          "options": ["Normal", "Clutch hard", "Picku low", "Weak need replace", "Average"]
+          "options": [
+            "Normal",
+            "Clutch hard",
+            "Picku low",
+            "Weak need replace",
+            "Average"
+          ]
         },
         {
           "key": "brakes",
@@ -369,7 +590,12 @@
           "key": "gear_shifting",
           "label": "Gear Shifting",
           "inputType": "select",
-          "options": ["Normal", "Tight shifting", "Gear struck up", "Not engaging properly"]
+          "options": [
+            "Normal",
+            "Tight shifting",
+            "Gear struck up",
+            "Not engaging properly"
+          ]
         },
         {
           "key": "gear_box",
@@ -387,7 +613,12 @@
           "key": "suspension",
           "label": "Suspension",
           "inputType": "select",
-          "options": ["Normal", "Minor noise", "Weak, need attention", "Average"]
+          "options": [
+            "Normal",
+            "Minor noise",
+            "Weak, need attention",
+            "Average"
+          ]
         },
         {
           "key": "engine_sound_vibration",
@@ -474,20 +705,58 @@
     {
       "section": "OBD & Legal",
       "items": [
-        { "key": "obd_pre_scan", "label": "OBD Pre-scan Report", "inputType": "image" },
-        { "key": "obd_post_scan", "label": "OBD Post-scan Report", "inputType": "image" },
-        { "key": "chassis_vin_image", "label": "Chassis/VIN Image", "inputType": "image" },
-        { "key": "back_compression_video", "label": "Back Compression Check Video", "inputType": "image" },
-        { "key": "under_chassis_images", "label": "Under Chassis Images", "inputType": "multi_image" },
-        { "key": "other_reference", "label": "Other / Reference", "inputType": "multi_image" },
+        {
+          "key": "obd_pre_scan",
+          "label": "OBD Pre-scan Report",
+          "inputType": "image"
+        },
+        {
+          "key": "obd_post_scan",
+          "label": "OBD Post-scan Report",
+          "inputType": "image"
+        },
+        {
+          "key": "chassis_vin_image",
+          "label": "Chassis/VIN Image",
+          "inputType": "image"
+        },
+        {
+          "key": "back_compression_video",
+          "label": "Back Compression Check Video",
+          "inputType": "image"
+        },
+        {
+          "key": "under_chassis_images",
+          "label": "Under Chassis Images",
+          "inputType": "multi-image",
+          "requiresPhoto": true
+        },
+        {
+          "key": "other_reference",
+          "label": "Other / Reference",
+          "inputType": "multi-image",
+          "requiresPhoto": true
+        },
         {
           "key": "challan_fine_status",
           "label": "Challan / Fine Status",
           "inputType": "select",
-          "options": ["Challan open need to pay", "No challans", "No blacklisted"]
+          "options": [
+            "Challan open need to pay",
+            "No challans",
+            "No blacklisted"
+          ]
         },
-        { "key": "challan_fine_image", "label": "Challan / Fine Status Image", "inputType": "image" },
-        { "key": "blacklist_status_image", "label": "Blacklist Status Image", "inputType": "image" },
+        {
+          "key": "challan_fine_image",
+          "label": "Challan / Fine Status Image",
+          "inputType": "image"
+        },
+        {
+          "key": "blacklist_status_image",
+          "label": "Blacklist Status Image",
+          "inputType": "image"
+        },
         {
           "key": "inspection_done_by",
           "label": "Inspection Done By",
