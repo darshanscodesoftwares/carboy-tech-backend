@@ -83,7 +83,7 @@ async function seed() {
 
     await ChecklistTemplate.create({
       serviceType: uciTemplate.serviceType,
-      items: uciTemplate.items,
+      sections: uciTemplate.sections,
     });
 
     // -------------------------------

@@ -40,6 +40,11 @@ module.exports = {
     const job = await jobRepository.findById(jobId);
     const template = await checklistRepository.findByService(job.serviceType);
 
+    console.log('[DEBUG] Template serviceType:', template?.serviceType);
+    console.log('[DEBUG] Template has sections:', !!template?.sections);
+    console.log('[DEBUG] Template has items:', !!template?.items);
+    if (template?.sections) console.log('[DEBUG] Sections count:', template.sections.length);
+
     if (!job || !template) return template;
 
     // Map saved answers by checkpointKey
@@ -49,9 +54,55 @@ module.exports = {
     });
 
     // =========================
-    // UCI CHECKLIST (FLAT)
+    // UCI CHECKLIST (SECTIONS - IDENTICAL TO PDI)
     // =========================
     if (template.serviceType === 'UCI') {
+      // UCI now uses sections structure (identical to PDI)
+      if (template.sections) {
+        const sections = JSON.parse(JSON.stringify(template.sections || []));
+
+        // Fetch technician details if assigned
+        let technicianName = 'Technician';
+        if (job.technicianId) {
+          const technician = await technicianRepository.findById(job.technicianId);
+          if (technician?.name) technicianName = technician.name;
+        }
+
+        // Get location address
+        let locationAddress = 'Location';
+        if (job.location?.address) locationAddress = job.location.address;
+
+        sections.forEach(section => {
+          section.items.forEach(item => {
+            // Inject dropdown options dynamically for specific fields
+            if (item.key === 'inspection_done_by') {
+              // Keep existing options from template
+            }
+
+            if (item.key === 'inspection_location') {
+              // Can optionally inject job location if needed
+              // For now, keep template options
+            }
+
+            // 🔑 MERGE SAVED VALUES INTO ITEM
+            const saved = answersMap[item.key];
+            if (saved) {
+              item.selectedOption = saved.selectedOption ?? null;
+              item.value = saved.value ?? null;
+              item.notes = saved.notes ?? null;
+              item.photoUrl = saved.photoUrl ?? null;
+              item.photoUrls = saved.photoUrls ?? null;
+            }
+          });
+        });
+
+        return {
+          serviceType: template.serviceType,
+          sections
+        };
+      }
+
+      // Backward compatibility: if template still has flat items
       const items = (template.items || []).map(item => {
         const saved = answersMap[item.key];
         return {
