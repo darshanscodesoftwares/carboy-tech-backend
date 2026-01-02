@@ -22,7 +22,8 @@ module.exports = {
     if (status) query.status = status;
 
     return Job.find(query)
-      .populate('technician', 'name email phone')
+      .populate('technician', 'name')
+      .populate('reportId')
       .sort({ createdAt: -1 })
       .lean(); // lean allowed because read only
   },

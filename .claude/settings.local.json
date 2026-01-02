@@ -14,7 +14,11 @@
       "Bash(JOB=\"6954c01c649166756d4c1e89\":*)",
       "Bash(TOK=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTRjMDFiNjQ5MTY2NzU2ZDRjMWU4NSIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MTYxOTAwLCJleHAiOjE3Njc3NjY3MDB9.o8a829cQrFjMxVHcQ5WeHUFZDnxB-TpcvQXGJgRTg5w\")",
       "Bash(node /tmp/check-db.js:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(node test-job-visibility.js:*)",
+      "Bash(node:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTdhYmU2ODUyNjc2MDU3ZDc3NGUwMSIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MzUzMzg5LCJleHAiOjE3Njc5NTgxODl9.yNbvG7jFd1WqyE4t2OV_piMINDIgjG1kFBxTjltPYAo\")",
+      "Bash(__NEW_LINE__ curl -X GET http://localhost:5001/api/technician/jobs )"
     ]
   }
 }
