@@ -16,7 +16,7 @@ const JobSchema = new mongoose.Schema({
   // references (normalized)
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: false },
   vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle', required: false },
-  technicianId: { type: mongoose.Schema.Types.ObjectId, ref: 'Technician', required: false },
+  technician: { type: mongoose.Schema.Types.ObjectId, ref: 'Technician', required: false },
 
   // snapshot: data shown to technician
   customerSnapshot: {

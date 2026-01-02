@@ -29,7 +29,7 @@ module.exports = {
   // update status
   async updateStatus(jobId, status) {
     const job = await jobRepository.updateStatus(jobId, status);
-    await technicianRepository.updateStatus(job.technicianId, status);
+    await technicianRepository.updateStatus(job.technician, status);
     return job;
   },
 
@@ -129,8 +129,8 @@ module.exports = {
 
       // Technician name
       let technicianName = 'Technician';
-      if (job.technicianId) {
-        const technician = await technicianRepository.findById(job.technicianId);
+      if (job.technician) {
+        const technician = await technicianRepository.findById(job.technician);
         if (technician?.name) technicianName = technician.name;
       }
 
@@ -212,14 +212,14 @@ module.exports = {
     } else {
       report = await inspectionRepository.create({
         jobId,
-        technicianId: job.technicianId,
+        technicianId: job.technician,
         answers: job.checklistAnswers,
         ...reportData
       });
     }
 
     await jobRepository.updateStatus(jobId, 'completed');
-    await technicianRepository.updateStatus(job.technicianId, 'completed');
+    await technicianRepository.updateStatus(job.technician, 'completed');
 
     return report;
   },
@@ -232,7 +232,7 @@ module.exports = {
     if (!job) throw new Error("Job not found");
 
     await jobRepository.updateStatus(jobId, 'in_inspection');
-    await technicianRepository.updateStatus(job.technicianId, 'in_inspection');
+    await technicianRepository.updateStatus(job.technician, 'in_inspection');
 
     return job;
   },

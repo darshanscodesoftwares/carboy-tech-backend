@@ -18,10 +18,11 @@ module.exports = {
 
   // list jobs (read-only -> lean OK)
   async findByTechnician(technicianId, status) {
-    const query = { technicianId };
+    const query = { technician: technicianId };
     if (status) query.status = status;
 
     return Job.find(query)
+      .populate('technician', 'name email phone')
       .sort({ createdAt: -1 })
       .lean(); // lean allowed because read only
   },
@@ -39,7 +40,7 @@ module.exports = {
   async assignTechnician(jobId, technicianId) {
     return Job.findByIdAndUpdate(
       jobId,
-      { technicianId, status: 'accepted' },
+      { technician: technicianId, status: 'accepted' },
       { new: true }
     ).lean();
   },

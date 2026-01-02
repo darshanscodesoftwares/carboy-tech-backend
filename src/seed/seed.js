@@ -70,7 +70,7 @@ async function seed() {
         schedule: job.schedule,
         location: job.location,
         status: job.status,
-        technicianId: assignedTech ? assignedTech._id : null,
+        technician: assignedTech ? assignedTech._id : null,
       });
     }
 
