@@ -16,7 +16,7 @@ module.exports = {
 
   // login or fetch by email
   async findByEmail(email) {
-    return Technician.findOne({ email }).lean();
+    return Technician.findOne({ email }).select('+passwordHash').lean();
   },
 
   // fetch by ID
