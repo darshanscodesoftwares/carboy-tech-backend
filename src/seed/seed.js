@@ -7,7 +7,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -41,13 +40,13 @@ async function seed() {
 
     const techDocs = [];
     for (const tech of techniciansData) {
-      const passwordHash = await bcrypt.hash(tech.passwordPlain, 10);
-
+      // Pass plain password to passwordHash field
+      // Pre-save hook will hash it automatically
       const doc = await Technician.create({
         name: tech.name,
         email: tech.email,
         phone: tech.phone,
-        passwordHash,
+        passwordHash: tech.passwordPlain,
         skills: tech.skills,
         status: tech.status,
       });
