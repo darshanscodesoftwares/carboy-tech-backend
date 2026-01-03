@@ -46,6 +46,14 @@ module.exports = {
     ).lean();
   },
 
+  async updateById(jobId, updateData) {
+  return Job.findByIdAndUpdate(
+    jobId,
+    updateData,
+    { new: true }
+  );
+},
+
   // REMOVE $push — we manually update inside service
   async save(job) {
     return job.save(); // direct mongoose save

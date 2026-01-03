@@ -11,6 +11,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'https://carboy-tech-frontend.onrender.com',
+  'http://192.168.29.224:5173',
 ];
 
 app.use(cors({
