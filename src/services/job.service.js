@@ -248,5 +248,39 @@ module.exports = {
       job,
       report
     };
+  },
+
+ // =====================================================
+// SEND REPORT TO ADMIN (FINAL SUBMISSION)
+// =====================================================
+async sendReport(jobId) {
+  const job = await jobRepository.findById(jobId);
+  if (!job) throw new Error('Job not found');
+
+  // Ensure inspection is completed
+  if (job.status !== 'completed') {
+    throw new Error('Inspection not completed yet');
   }
+
+  // Find inspection report created during completeInspection
+  const report = await inspectionRepository.findByJob(jobId);
+  if (!report) {
+    throw new Error('Inspection report not found');
+  }
+
+  // Mark report as submitted
+  report.submittedAt = new Date();
+  await inspectionRepository.update(report._id, report);
+
+  // Update job status → THIS is what admin waits for
+  await jobRepository.updateStatus(jobId, 'report_sent');
+
+  return {
+    jobId,
+    reportId: report._id,
+    status: 'report_sent'
+  };
+}
+
+
 };
