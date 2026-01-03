@@ -174,6 +174,46 @@ module.exports = {
   },
 
   // =====================================================
+  // SEND REPORT TO ADMIN (FINAL SUBMISSION)
+  // =====================================================
+  async sendReport(jobId) {
+    const job = await jobRepository.findById(jobId);
+    if (!job) throw new Error("Job not found");
+
+    if (job.status !== 'completed') {
+      throw new Error("Cannot send report. Inspection must be completed first.");
+    }
+
+    // Create or update InspectionReport
+    let report = await inspectionRepository.findByJob(jobId);
+
+    if (report) {
+      // Update existing report
+      report = await inspectionRepository.update(report._id, {
+        answers: job.checklistAnswers,
+        submittedAt: new Date()
+      });
+    } else {
+      // Create new report
+      report = await inspectionRepository.create({
+        jobId,
+        technicianId: job.technician,
+        answers: job.checklistAnswers,
+        submittedAt: new Date()
+      });
+    }
+
+    // Update job status and link to report
+    job.status = 'report_sent';
+    job.reportId = report._id;
+    await jobRepository.save(job);
+
+    await technicianRepository.updateStatus(job.technician, 'report_sent');
+
+    return job;
+  },
+
+  // =====================================================
   // REOPEN INSPECTION
   // =====================================================
   async reopenInspection(jobId) {
