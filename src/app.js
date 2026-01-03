@@ -1,12 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const uploadRoutes = require("./routes/upload.routes");
+
 
 // ------------------------
 // CORS CONFIG (EXPRESS 5 SAFE)
 // ------------------------
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
   'https://carboy-tech-frontend.onrender.com',
 ];
 
@@ -30,6 +33,12 @@ app.use(cors({
 // JSON Parsing
 // ------------------------
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/uploads", express.static("uploads"));
+app.use("/api/technician/uploads", uploadRoutes);
+
 
 // ------------------------
 // Swagger setup
