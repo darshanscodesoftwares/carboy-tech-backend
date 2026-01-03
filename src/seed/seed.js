@@ -57,22 +57,22 @@ async function seed() {
     // -------------------------------
     // 2) Seed Jobs
     // -------------------------------
-    console.log('🚗 Seeding jobs...');
-    const jobsData = await loadJson('jobs.json');
+    // console.log('🚗 Seeding jobs...');
+    // const jobsData = await loadJson('jobs.json');
 
-    for (const job of jobsData) {
-      const assignedTech = techDocs[job.assignedToIndex];
+    // for (const job of jobsData) {
+    //   const assignedTech = techDocs[job.assignedToIndex];
 
-      await Job.create({
-        serviceType: job.serviceType,
-        customerSnapshot: job.customerSnapshot,
-        vehicleSnapshot: job.vehicleSnapshot,
-        schedule: job.schedule,
-        location: job.location,
-        status: job.status,
-        technician: assignedTech ? assignedTech._id : null,
-      });
-    }
+    //   await Job.create({
+    //     serviceType: job.serviceType,
+    //     customerSnapshot: job.customerSnapshot,
+    //     vehicleSnapshot: job.vehicleSnapshot,
+    //     schedule: job.schedule,
+    //     location: job.location,
+    //     status: job.status,
+    //     technician: assignedTech ? assignedTech._id : null,
+    //   });
+    // }
 
     // -------------------------------
     // 3) Seed UCI Checklist Template
