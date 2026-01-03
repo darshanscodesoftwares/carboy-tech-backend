@@ -203,12 +203,9 @@ module.exports = {
       });
     }
 
-    // Update job status and link to report
-    job.status = 'report_sent';
+    // Link job to report
     job.reportId = report._id;
     await jobRepository.save(job);
-
-    await technicianRepository.updateStatus(job.technician, 'report_sent');
 
     return job;
   },
