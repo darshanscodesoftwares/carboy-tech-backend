@@ -708,12 +708,12 @@
         {
           "key": "obd_pre_scan",
           "label": "OBD Pre-scan Report",
-          "inputType": "image"
+          "inputType": "document"
         },
         {
           "key": "obd_post_scan",
           "label": "OBD Post-scan Report",
-          "inputType": "image"
+          "inputType": "document"
         },
         {
           "key": "chassis_vin_image",
@@ -723,7 +723,7 @@
         {
           "key": "back_compression_video",
           "label": "Back Compression Check Video",
-          "inputType": "image"
+          "inputType": "video"
         },
         {
           "key": "under_chassis_images",

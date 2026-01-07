@@ -104,12 +104,7 @@
           "key": "battery_status",
           "label": "Battery status",
           "inputType": "radio",
-          "options": [
-            "Normal",
-            "Weak",
-            "Loose connection",
-            "Acid leak found"
-          ],
+          "options": ["Normal", "Weak", "Loose connection", "Acid leak found"],
           "requiresPhoto": true
         },
         {
@@ -127,8 +122,7 @@
         {
           "key": "engine_sound_file",
           "label": "Engine sound file",
-          "inputType": "image",
-          "requiresPhoto": true
+          "inputType": "audio"
         },
         {
           "key": "engine_vibration",
@@ -178,11 +172,7 @@
           "key": "engine_accessories_belt",
           "label": "Engine accessories belt",
           "inputType": "radio",
-          "options": [
-            "Normal",
-            "Abnormal noise found",
-            "Loosen / Crack found"
-          ]
+          "options": ["Normal", "Abnormal noise found", "Loosen / Crack found"]
         },
         {
           "key": "oil_leaks",

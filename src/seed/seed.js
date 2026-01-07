@@ -1,6 +1,4 @@
 // Seed script for CarBoy Technician Backend
-// - Creates technicians with hashed passwords
-// - Creates sample jobs assigned to technicians
 // - Creates UCI + PDI checklist templates
 //
 // Run with: npm run seed
@@ -28,31 +26,31 @@ async function seed() {
 
   try {
     console.log('🧹 Clearing existing collections...');
-    await Technician.deleteMany({});
-    await Job.deleteMany({});
+    // await Technician.deleteMany({});
+    // await Job.deleteMany({});
     await ChecklistTemplate.deleteMany({});
 
     // -------------------------------
     // 1) Seed Technicians
     // -------------------------------
-    console.log('👨‍🔧 Seeding technicians...');
-    const techniciansData = await loadJson('technicians.json');
+    // console.log('👨‍🔧 Seeding technicians...');
+    // const techniciansData = await loadJson('technicians.json');
 
-    const techDocs = [];
-    for (const tech of techniciansData) {
-      // Pass plain password to passwordHash field
-      // Pre-save hook will hash it automatically
-      const doc = await Technician.create({
-        name: tech.name,
-        email: tech.email,
-        phone: tech.phone,
-        passwordHash: tech.passwordPlain,
-        skills: tech.skills,
-        status: tech.status,
-      });
+    // const techDocs = [];
+    // for (const tech of techniciansData) {
+    //   // Pass plain password to passwordHash field
+    //   // Pre-save hook will hash it automatically
+    //   const doc = await Technician.create({
+    //     name: tech.name,
+    //     email: tech.email,
+    //     phone: tech.phone,
+    //     passwordHash: tech.passwordPlain,
+    //     skills: tech.skills,
+    //     status: tech.status,
+    //   });
 
-      techDocs.push(doc);
-    }
+    //   techDocs.push(doc);
+    // }
 
     // -------------------------------
     // 2) Seed Jobs
