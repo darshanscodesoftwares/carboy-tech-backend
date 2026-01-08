@@ -15,16 +15,34 @@
           "inputType": "text"
         },
         {
-          "key": "transmission",
-          "label": "Transmission",
-          "inputType": "dropdown",
-          "options": ["Manual", "Automatic", "CVT", "DCT"]
-        },
-        { "key": "vin_number", "label": "VIN Number", "inputType": "text" },
-        {
           "key": "inspection_date",
           "label": "Inspection Date",
           "inputType": "text"
+        },
+        {
+          "key": "car_make",
+          "label": "Car make",
+          "inputType": "text"
+        },
+        {
+          "key": "car_model",
+          "label": "Car model",
+          "inputType": "text"
+        },
+        {
+          "key": "make_model_year",
+          "label": "Make & Model year",
+          "inputType": "text"
+        },
+        {
+          "key": "car_registration_number",
+          "label": "Car Registration Number",
+          "inputType": "text"
+        },
+        { 
+          "key": "vin_number", 
+          "label": "VIN Number", 
+          "inputType": "text" 
         },
         {
           "key": "current_odometer_reading",
@@ -32,31 +50,16 @@
           "inputType": "text"
         },
         {
+          "key": "transmission",
+          "label": "Transmission",
+          "inputType": "dropdown",
+          "options": ["Manual", "Automatic", "CVT", "DCT"]
+        },
+        {
           "key": "fuel_type",
           "label": "Fuel Type",
           "inputType": "select",
-          "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"]
-        },
-        {
-          "key": "car_registration_number",
-          "label": "Car Registration Number",
-          "inputType": "text"
-        },
-        {
-          "key": "make_model_year",
-          "label": "Make & Model (with year)",
-          "inputType": "text"
-        },
-        {
-          "key": "ratings_out_of_10",
-          "label": "Ratings out of 10",
-          "inputType": "select",
-          "options": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-        },
-        {
-          "key": "report_summary_highlights",
-          "label": "Report Summary Highlights",
-          "inputType": "text"
+          "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Petrol + CNG", "Petrol + LPG", "Petrol + Hybrid"]
         }
       ]
     },
@@ -100,7 +103,8 @@
             "Oil mix",
             "Dry",
             "Low level",
-            "Only water inside"
+            "Only water inside",
+            "heavy rusted"
           ]
         },
         {
@@ -112,7 +116,7 @@
           "key": "battery_condition",
           "label": "Battery Condition",
           "inputType": "select",
-          "options": ["Weak", "Normal", "Need to recharge"]
+          "options": ["Normal", "Weak", "Need to recharge", "clamp missing", "Loose connection", "Acid leak found"]
         },
         {
           "key": "battery_photo",
@@ -841,7 +845,7 @@
           "key": "orvm_switch",
           "label": "ORVM Switch",
           "inputType": "select",
-          "options": ["Normal", "Not available", "Not working", "Damaged"]
+          "options": ["Normal", "switch not working properly" ,"Not available", "Damaged"]
         },
         {
           "key": "airbags",
@@ -1050,7 +1054,7 @@
           "key": "paddle_shifters",
           "label": "Paddle Shifters",
           "inputType": "select",
-          "options": ["Normal", "Not available"]
+          "options": ["Working Normal", "Damaged", "Not working", "Not available"]
         },
         {
           "key": "suspension",
@@ -1134,6 +1138,7 @@
             "Black smoke",
             "White smoke",
             "Grey smoke",
+            "Blue smoke",
             "Rusted minor"
           ]
         },
@@ -1209,8 +1214,7 @@
         {
           "key": "location",
           "label": "Location",
-          "inputType": "dropdown",
-          "options": []
+          "inputType": "text"
         }
       ]
     }

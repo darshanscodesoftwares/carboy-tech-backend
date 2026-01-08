@@ -2,7 +2,7 @@
   "serviceType": "PDI",
   "sections": [
     {
-      "section": "Car Details",
+      "section": "Vehicle & Customer Details",
       "items": [
         {
           "key": "car_front_image",
@@ -32,11 +32,6 @@
           "inputType": "text"
         },
         {
-          "key": "vin_number",
-          "label": "VIN number",
-          "inputType": "text"
-        },
-        {
           "key": "car_make",
           "label": "Car make",
           "inputType": "text"
@@ -46,6 +41,17 @@
           "label": "Car model",
           "inputType": "text"
         },
+        {
+          "key": "make_model_year",
+          "label": "Make & Model year",
+          "inputType": "text"
+        },
+        {
+          "key": "vin_number",
+          "label": "VIN number",
+          "inputType": "text"
+        },
+        
         {
           "key": "current_odometer_reading",
           "label": "Current odometer reading",
@@ -61,12 +67,7 @@
           "key": "fuel_type",
           "label": "Fuel type",
           "inputType": "dropdown",
-          "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"]
-        },
-        {
-          "key": "report_summary",
-          "label": "Report summary remarks",
-          "inputType": "textarea"
+          "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Petrol + CNG", "Petrol + LPG", "Petrol + Hybrid"]
         }
       ]
     },
@@ -104,7 +105,7 @@
           "key": "battery_status",
           "label": "Battery status",
           "inputType": "radio",
-          "options": ["Normal", "Weak", "Loose connection", "Acid leak found"],
+          "options": ["Normal", "Weak", "Need to recharge", "clamp missing", "Loose connection", "Acid leak found"],
           "requiresPhoto": true
         },
         {
@@ -645,7 +646,7 @@
           "key": "orvm_switch",
           "label": "ORVM switch",
           "inputType": "radio",
-          "options": ["Working normal", "Defective"]
+          "options": ["Working normal", "switch not working properly", "Not available", "Defective"]
         },
         {
           "key": "central_lock_switch",
@@ -699,7 +700,7 @@
           "key": "paddle_shifters",
           "label": "Paddle shifters",
           "inputType": "radio",
-          "options": ["Working normal", "Defective", "Not available"]
+          "options": ["Working normal", "Damaged","Not working", "Not available"]
         },
         {
           "key": "individual_speakers",
@@ -902,8 +903,7 @@
         {
           "key": "location",
           "label": "Location",
-          "inputType": "dropdown",
-          "options": []
+          "inputType": "text"
         },
         {
           "key": "dealer_name",
