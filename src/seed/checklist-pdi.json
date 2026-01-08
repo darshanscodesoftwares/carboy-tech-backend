@@ -294,12 +294,6 @@
           "options": ["Normal", "Scratched", "Damaged"]
         },
         {
-          "key": "front_left_car_image",
-          "label": "Front left car image",
-          "inputType": "image",
-          "requiresPhoto": true
-        },
-        {
           "key": "front_left_tyre",
           "label": "Front left tyre",
           "inputType": "image",
