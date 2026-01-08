@@ -1201,16 +1201,16 @@
           "inputType": "image"
         },
         {
-          "key": "inspection_done_by",
+          "key": "technician_name",
           "label": "Inspection Done By",
-          "inputType": "select",
-          "options": ["Mohammed Ismaail", "Nelson A"]
+          "inputType": "dropdown",
+          "options": []
         },
         {
-          "key": "inspection_location",
+          "key": "location",
           "label": "Location",
-          "inputType": "select",
-          "options": ["Chennai", "Coimbatore"]
+          "inputType": "dropdown",
+          "options": []
         }
       ]
     }
