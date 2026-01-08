@@ -14,7 +14,12 @@
           "label": "Customer Name",
           "inputType": "text"
         },
-        { "key": "transmission", "label": "Transmission", "inputType": "text" },
+        {
+          "key": "transmission",
+          "label": "Transmission",
+          "inputType": "dropdown",
+          "options": ["Manual", "Automatic", "CVT", "DCT"]
+        },
         { "key": "vin_number", "label": "VIN Number", "inputType": "text" },
         {
           "key": "inspection_date",
@@ -292,11 +297,12 @@
             "Major scratched",
             "Minor dent",
             "Major dent",
-            "Rusted",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
             "Repainted",
             "Repaired",
-            "Replaced",
-            "Faded/paint mis-match"
+            "Replaced"
           ]
         },
         {
@@ -308,13 +314,20 @@
             "Major scratched",
             "Minor dent",
             "Major dent",
-            "Cracked/broken",
+            "Cracked / broken",
+            "Paint faded / mis-match",
             "Repainted",
             "Repaired",
-            "Replaced",
-            "Faded/paint mis-match"
+            "Replaced"
           ]
         },
+        {
+          "key": "front_bumper_grill",
+          "label": "Front Bumper Grill",
+          "inputType": "select",
+          "options": ["Normal", "Scratched", "Damaged", "Repaired"]
+        },
+
         {
           "key": "headlight_left",
           "label": "Headlight Left",
@@ -327,18 +340,7 @@
           "inputType": "select",
           "options": ["Normal", "Scratched", "Damaged", "Repaired", "Faded"]
         },
-        {
-          "key": "fog_lamp_right",
-          "label": "Fog Lamp Right",
-          "inputType": "select",
-          "options": [
-            "Normal",
-            "Damaged",
-            "Missing",
-            "Not working",
-            "Not available"
-          ]
-        },
+
         {
           "key": "fog_lamp_left",
           "label": "Fog Lamp Left",
@@ -352,28 +354,469 @@
           ]
         },
         {
-          "key": "front_bumper_grill",
-          "label": "Front Bumper Grill",
+          "key": "fog_lamp_right",
+          "label": "Fog Lamp Right",
           "inputType": "select",
-          "options": ["Normal", "Scratched", "Damaged", "Repaired"]
+          "options": [
+            "Normal",
+            "Damaged",
+            "Missing",
+            "Not working",
+            "Not available"
+          ]
+        },
+
+        {
+          "key": "fender_left",
+          "label": "Fender Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
         },
         {
-          "key": "front_left_tyre_thickness",
-          "label": "Front Left Tyre Thickness",
+          "key": "mirror_assembly_left",
+          "label": "Mirror Assembly Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Damaged / broken",
+            "Shaken / vibration",
+            "Mirror missing"
+          ]
+        },
+
+        {
+          "key": "a_pillar_left",
+          "label": "A Pillar Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "b_pillar_left",
+          "label": "B Pillar Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "c_pillar_left",
+          "label": "C Pillar Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "left_door_front",
+          "label": "Left Door Front",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "left_door_rear",
+          "label": "Left Door Rear",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "running_board_left",
+          "label": "Running Board Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "quarter_panel_left",
+          "label": "Quarter Panel Left",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "roof_outer",
+          "label": "Roof Outer",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "roof_outer_image",
+          "label": "Roof Outer Image",
+          "inputType": "image"
+        },
+
+        {
+          "key": "rear_left_tyre_thickness",
+          "label": "Rear Left Tyre Thickness",
           "inputType": "image"
         },
         {
-          "key": "front_right_tyre_thickness",
-          "label": "Front Right Tyre Thickness",
+          "key": "rear_right_tyre_thickness",
+          "label": "Rear Right Tyre Thickness",
           "inputType": "image"
         },
+
         {
-          "key": "car_left_image",
-          "label": "Car Left Image",
+          "key": "car_rear_image",
+          "label": "Car Rear Image",
+          "inputType": "image"
+        },
+
+        {
+          "key": "rear_windshield",
+          "label": "Rear Windshield",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Cracked / broken",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "boot_door",
+          "label": "Boot Door (Dicky)",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "boot_door_open_image",
+          "label": "Boot Door Open Image",
+          "inputType": "image"
+        },
+
+        {
+          "key": "rear_bumper",
+          "label": "Rear Bumper",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "boot_floor",
+          "label": "Boot Floor",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Minor rust",
+            "Major rust (critical)",
+            "Minor dent found",
+            "Major dent found",
+            "Floor repaired",
+            "Cracked / broken"
+          ]
+        },
+        {
+          "key": "boot_floor_images",
+          "label": "Boot Floor Images",
+          "inputType": "multi-image"
+        },
+
+        {
+          "key": "tool_kit",
+          "label": "Tool Kit",
+          "inputType": "select",
+          "options": ["All available", "Tools missing"]
+        },
+        {
+          "key": "spare_wheel_tool_kit_images",
+          "label": "Spare Wheel & Tool Kit Images",
+          "inputType": "multi-image"
+        },
+
+        {
+          "key": "tail_lamp_left",
+          "label": "Tail Lamp Left",
+          "inputType": "select",
+          "options": ["Normal", "Cracked / broken", "Faded", "Water logged"]
+        },
+        {
+          "key": "tail_lamp_right",
+          "label": "Tail Lamp Right",
+          "inputType": "select",
+          "options": ["Normal", "Cracked / broken", "Faded", "Water logged"]
+        },
+
+        {
+          "key": "quarter_panel_right",
+          "label": "Quarter Panel Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "running_board_right",
+          "label": "Running Board Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "right_door_rear",
+          "label": "Right Door Rear",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "right_door_front",
+          "label": "Right Door Front",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "a_pillar_right",
+          "label": "A Pillar Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "b_pillar_right",
+          "label": "B Pillar Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+        {
+          "key": "c_pillar_right",
+          "label": "C Pillar Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "mirror_assembly_right",
+          "label": "Mirror Assembly Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Damaged / broken",
+            "Shaken / vibration",
+            "Mirror missing"
+          ]
+        },
+
+        {
+          "key": "fender_right",
+          "label": "Fender Right",
+          "inputType": "select",
+          "options": [
+            "Normal",
+            "Major scratched",
+            "Minor dent",
+            "Major dent",
+            "Minor rust",
+            "Major rust (critical)",
+            "Paint faded / mis-match",
+            "Repainted",
+            "Repaired",
+            "Replaced"
+          ]
+        },
+
+        {
+          "key": "car_right_image",
+          "label": "Car Right Image",
           "inputType": "image"
         }
       ]
     },
+
     {
       "section": "Interior",
       "items": [

@@ -10,8 +10,6 @@ require('dotenv').config();
 
 const { connectDatabase } = require('../config/database');
 
-const Technician = require('../models/technician.model');
-const Job = require('../models/job.model');
 const ChecklistTemplate = require('../models/checklist.model');
 
 // Helper: Load JSON file
@@ -26,54 +24,10 @@ async function seed() {
 
   try {
     console.log('🧹 Clearing existing collections...');
-    // await Technician.deleteMany({});
-    // await Job.deleteMany({});
     await ChecklistTemplate.deleteMany({});
 
     // -------------------------------
-    // 1) Seed Technicians
-    // -------------------------------
-    // console.log('👨‍🔧 Seeding technicians...');
-    // const techniciansData = await loadJson('technicians.json');
-
-    // const techDocs = [];
-    // for (const tech of techniciansData) {
-    //   // Pass plain password to passwordHash field
-    //   // Pre-save hook will hash it automatically
-    //   const doc = await Technician.create({
-    //     name: tech.name,
-    //     email: tech.email,
-    //     phone: tech.phone,
-    //     passwordHash: tech.passwordPlain,
-    //     skills: tech.skills,
-    //     status: tech.status,
-    //   });
-
-    //   techDocs.push(doc);
-    // }
-
-    // -------------------------------
-    // 2) Seed Jobs
-    // -------------------------------
-    // console.log('🚗 Seeding jobs...');
-    // const jobsData = await loadJson('jobs.json');
-
-    // for (const job of jobsData) {
-    //   const assignedTech = techDocs[job.assignedToIndex];
-
-    //   await Job.create({
-    //     serviceType: job.serviceType,
-    //     customerSnapshot: job.customerSnapshot,
-    //     vehicleSnapshot: job.vehicleSnapshot,
-    //     schedule: job.schedule,
-    //     location: job.location,
-    //     status: job.status,
-    //     technician: assignedTech ? assignedTech._id : null,
-    //   });
-    // }
-
-    // -------------------------------
-    // 3) Seed UCI Checklist Template
+    // 1) Seed UCI Checklist Template
     // -------------------------------
     console.log('📋 Seeding UCI checklist template...');
     const uciTemplate = await loadJson('checklist-uci.json');
@@ -84,7 +38,7 @@ async function seed() {
     });
 
     // -------------------------------
-    // 4) Seed PDI Checklist Template
+    // 2) Seed PDI Checklist Template
     // -------------------------------
     console.log('📋 Seeding PDI checklist template...');
     const pdiTemplate = await loadJson('checklist-pdi.json');
