@@ -1020,7 +1020,7 @@
           "inputType": "select",
           "options": ["Working Normal", "Not available"]
         },
-        { "key": "abs_image", "label": "ABS Image", "inputType": "image" },
+        { "key": "abs_image", "label": "ABS Image", "inputType": "image", "optional": true },
         {
           "key": "acceleration",
           "label": "Acceleration",
@@ -1092,7 +1092,7 @@
             "Whistling noise"
           ]
         },
-        { "key": "turbo_image", "label": "Turbo Image", "inputType": "image" },
+        { "key": "turbo_image", "label": "Turbo Image", "inputType": "image", "optional": true },
         {
           "key": "pickup_performance",
           "label": "Pickup and Performance",
@@ -1161,7 +1161,8 @@
         {
           "key": "obd_post_scan",
           "label": "OBD Post-scan Report",
-          "inputType": "document"
+          "inputType": "document",
+          "optional": true
         },
         {
           "key": "chassis_vin_image",
@@ -1193,17 +1194,20 @@
             "Challan open need to pay",
             "No challans",
             "No blacklisted"
-          ]
+          ],
+          "optional": true
         },
         {
           "key": "challan_fine_image",
           "label": "Challan / Fine Status Image",
-          "inputType": "image"
+          "inputType": "image",
+          "optional": true
         },
         {
           "key": "blacklist_status_image",
           "label": "Blacklist Status Image",
-          "inputType": "image"
+          "inputType": "image",
+          "optional": true
         },
         {
           "key": "technician_name",
