@@ -319,20 +319,18 @@
 //   };
 // }
 
-
 // };
 
 // Job Service
 // Contains full business logic of job lifecycle.
 // Uses repositories only (no direct DB calls).
 
-const jobRepository = require('../repositories/job.repository');
-const checklistRepository = require('../repositories/checklist.repository');
-const inspectionRepository = require('../repositories/inspection.repository');
-const technicianRepository = require('../repositories/technician.repository');
+const jobRepository = require("../repositories/job.repository");
+const checklistRepository = require("../repositories/checklist.repository");
+const inspectionRepository = require("../repositories/inspection.repository");
+const technicianRepository = require("../repositories/technician.repository");
 
 module.exports = {
-
   // =====================================================
   // LIST JOBS
   // =====================================================
@@ -345,7 +343,7 @@ module.exports = {
   // =====================================================
   async acceptJob(jobId, technicianId) {
     const job = await jobRepository.assignTechnician(jobId, technicianId);
-    await technicianRepository.updateStatus(technicianId, 'assigned');
+    await technicianRepository.updateStatus(technicianId, "assigned");
     return job;
   },
 
@@ -370,13 +368,13 @@ module.exports = {
   // =====================================================
   async getChecklist(jobId) {
     const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error('Job not found');
+    if (!job) throw new Error("Job not found");
 
     const template = await checklistRepository.findByService(job.serviceType);
     if (!template) return null;
 
     const answersMap = {};
-    (job.checklistAnswers || []).forEach(a => {
+    (job.checklistAnswers || []).forEach((a) => {
       answersMap[a.checkpointKey] = a;
     });
 
@@ -384,18 +382,18 @@ module.exports = {
 
     const sections = JSON.parse(JSON.stringify(template.sections));
 
-    let technicianName = 'Technician';
+    let technicianName = "Technician";
     if (job.technician) {
       const tech = await technicianRepository.findById(job.technician);
       if (tech?.name) technicianName = tech.name;
     }
 
-    let locationAddress = job.location?.address || 'Location';
+    let locationAddress = job.location?.address || "Location";
 
-    sections.forEach(section => {
-      section.items.forEach(item => {
-        if (item.key === 'technician_name') item.options = [technicianName];
-        if (item.key === 'location') item.options = [locationAddress];
+    sections.forEach((section) => {
+      section.items.forEach((item) => {
+        if (item.key === "technician_name") item.options = [technicianName];
+        if (item.key === "location") item.options = [locationAddress];
 
         const saved = answersMap[item.key];
         if (saved) {
@@ -410,7 +408,7 @@ module.exports = {
 
     return {
       serviceType: template.serviceType,
-      sections
+      sections,
     };
   },
 
@@ -419,18 +417,18 @@ module.exports = {
   // =====================================================
   async submitCheckpoint(jobId, answer) {
     const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error('Job not found');
+    if (!job) throw new Error("Job not found");
 
     job.checklistAnswers ||= [];
 
     const index = job.checklistAnswers.findIndex(
-      a => a.checkpointKey === answer.checkpointKey
+      (a) => a.checkpointKey === answer.checkpointKey
     );
 
     if (index !== -1) {
       job.checklistAnswers[index] = {
         ...job.checklistAnswers[index],
-        ...answer
+        ...answer,
       };
     } else {
       job.checklistAnswers.push(answer);
@@ -444,10 +442,10 @@ module.exports = {
   // =====================================================
   async completeInspection(jobId) {
     const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error('Job not found');
+    if (!job) throw new Error("Job not found");
 
-    await jobRepository.updateById(jobId, { status: 'completed' });
-    await technicianRepository.updateStatus(job.technician, 'completed');
+    await jobRepository.updateById(jobId, { status: "completed" });
+    await technicianRepository.updateStatus(job.technician, "completed");
 
     return job;
   },
@@ -457,40 +455,47 @@ module.exports = {
   // =====================================================
   async sendReport(jobId) {
     const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error('Job not found');
+    if (!job) throw new Error("Job not found");
 
-    if (job.status !== 'completed') {
-      throw new Error('Inspection must be completed first');
+    if (job.status !== "completed") {
+      throw new Error("Inspection must be completed first");
     }
+
+    // ✅ DEDUPE CHECKLIST ANSWERS BY checkpointKey
+    const dedupedAnswersMap = {};
+    (job.checklistAnswers || []).forEach((answer) => {
+      dedupedAnswersMap[answer.checkpointKey] = answer;
+    });
+    const dedupedAnswers = Object.values(dedupedAnswersMap);
 
     // 🔑 CREATE OR UPDATE INSPECTION REPORT
     let report = await inspectionRepository.findByJobId(jobId);
 
     if (report) {
       report = await inspectionRepository.update(report._id, {
-        checklistAnswers: job.checklistAnswers,
-        submittedAt: new Date()
+        checklistAnswers: dedupedAnswers,
+        submittedAt: new Date(),
       });
     } else {
       report = await inspectionRepository.create({
-        job: job._id,                    // ✅ FIXED
-        technician: job.technician,      // ✅ FIXED
+        job: job._id, // ✅ FIXED
+        technician: job.technician, // ✅ FIXED
         checklistTemplate: job.checklistTemplate || null,
-        checklistAnswers: job.checklistAnswers,
-        submittedAt: new Date()
+        checklistAnswers: dedupedAnswers,
+        submittedAt: new Date(),
       });
     }
 
     // 🔑 LINK REPORT TO JOB
     await jobRepository.updateById(job._id, {
       inspectionReport: report._id,
-      status: 'report_sent'
+      status: "report_sent",
     });
 
     return {
       jobId: job._id,
       reportId: report._id,
-      status: 'report_sent'
+      status: "report_sent",
     };
   },
 
@@ -499,10 +504,10 @@ module.exports = {
   // =====================================================
   async reopenInspection(jobId) {
     const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error('Job not found');
+    if (!job) throw new Error("Job not found");
 
-    await jobRepository.updateById(jobId, { status: 'in_inspection' });
-    await technicianRepository.updateStatus(job.technician, 'in_inspection');
+    await jobRepository.updateById(jobId, { status: "in_inspection" });
+    await technicianRepository.updateStatus(job.technician, "in_inspection");
 
     return job;
   },
@@ -515,5 +520,5 @@ module.exports = {
     const report = await inspectionRepository.findByJobId(jobId);
 
     return { job, report };
-  }
+  },
 };
