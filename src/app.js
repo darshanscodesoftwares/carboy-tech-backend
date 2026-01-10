@@ -14,21 +14,28 @@ const allowedOrigins = [
   'http://192.168.29.224:5173',
 ];
 
+
 app.use(cors({
   origin: (origin, callback) => {
-    // allow server-to-server, Postman, mobile apps
+    // Allow server-to-server, mobile apps, curl, Postman
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.includes(origin)) {
+    const normalizedOrigin = origin.replace(/\/$/, '');
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
       return callback(null, true);
     }
 
-    return callback(new Error('Not allowed by CORS'));
+    console.error('❌ CORS BLOCKED ORIGIN:', origin);
+    return callback(null, false); // DO NOT throw Error
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.options(/.*/, cors());
+
 
 // ------------------------
 // JSON Parsing
