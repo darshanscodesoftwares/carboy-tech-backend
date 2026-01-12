@@ -97,6 +97,12 @@
           "requiresPhoto": true
         },
         {
+          "key": "engine_oil_image",
+          "label": "Engine oil image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "coolant_level",
           "label": "Coolant level",
           "inputType": "radio",
@@ -104,10 +110,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "coolant_image",
+          "label": "Coolant image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "brake_oil_level",
           "label": "Brake oil level",
           "inputType": "radio",
           "options": ["Normal", "Level low", "Need to top-up"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "brake_oil_image",
+          "label": "Brake oil image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -122,6 +140,12 @@
             "Loose connection",
             "Acid leak found"
           ],
+          "requiresPhoto": true
+        },
+        {
+          "key": "battery_image",
+          "label": "Battery image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -167,10 +191,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "turbo_image",
+          "label": "Turbo image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "abs_status",
           "label": "ABS",
           "inputType": "radio",
           "options": ["Available", "Not available"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "abs_image",
+          "label": "ABS image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -205,10 +241,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "left_apron_image",
+          "label": "Left apron image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "right_apron",
           "label": "Right apron",
           "inputType": "radio",
           "options": ["Normal", "Defective", "Rusted"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "right_apron_image",
+          "label": "Right apron image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -219,6 +267,12 @@
           "requiresPhoto": true
         },
         {
+          "key": "right_apron_leg_image",
+          "label": "Right apron leg image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "left_apron_leg",
           "label": "Left apron leg",
           "inputType": "radio",
@@ -226,10 +280,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "left_apron_leg_image",
+          "label": "Left apron leg image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "engine_bottom_sump",
           "label": "Engine bottom sump",
           "inputType": "radio",
           "options": ["Normal", "Damaged"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "bottom_sump_image",
+          "label": "Bottom sump image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
