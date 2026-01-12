@@ -347,7 +347,6 @@
           "inputType": "select",
           "options": ["Normal", "Scratched", "Damaged", "Repaired"]
         },
-
         {
           "key": "headlight_left",
           "label": "Headlight Left",
@@ -559,7 +558,18 @@
           "label": "Roof Outer Image",
           "inputType": "image"
         },
-
+        {
+          "key": "front_left_tyre_image",
+          "label": "Front left tyre image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
+          "key": "front_right_tyre_image",
+          "label": "Front right tyre image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
         {
           "key": "rear_left_tyre_thickness",
           "label": "Rear Left Tyre Thickness",
@@ -833,6 +843,12 @@
           "key": "car_right_image",
           "label": "Car Right Image",
           "inputType": "image"
+        },
+        {
+          "key": "car_left_image",
+          "label": "Car left image",
+          "inputType": "image",
+          "requiresPhoto": true
         }
       ]
     },
