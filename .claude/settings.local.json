@@ -1,7 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run seed:*)"
+      "Bash(npm run seed:*)",
+      "Bash(curl:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTRiYjdmYzE0MDc5NDRhMmZiYmExOCIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MTYwOTI0LCJleHAiOjE3Njc3NjU3MjR9.MAcBdjqa2gQCBDzBS2toRJ3S0A033mxKjVpXDGrm8Ic\")",
+      "Bash(python3:*)",
+      "Bash(JOB_ID=\"6954bb7fc1407944a2fbba1c\")",
+      "Bash(cat:*)",
+      "Bash(PDI_JOB=\"6954bb7fc1407944a2fbba1e\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTRiYjdmYzE0MDc5NDRhMmZiYmExYSIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MTYxMTMxLCJleHAiOjE3Njc3NjU5MzF9.O8bdzhNksF75-k95bA0364AGty8H4B9eCNsZRDZikDA\")",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTRiZjVlNjMxNjc0MzEyODMwNjRiNyIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MTYxNzcwLCJleHAiOjE3Njc3NjY1NzB9.ydbNcKeipci5uv81OgJkmNzr0CJmu9UZAyGyXMW9rfU\")",
+      "Bash(JOB_ID=\"6954bf5e63167431283064bb\":*)",
+      "Bash(JOB=\"6954c01c649166756d4c1e89\":*)",
+      "Bash(TOK=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTRjMDFiNjQ5MTY2NzU2ZDRjMWU4NSIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MTYxOTAwLCJleHAiOjE3Njc3NjY3MDB9.o8a829cQrFjMxVHcQ5WeHUFZDnxB-TpcvQXGJgRTg5w\")",
+      "Bash(node /tmp/check-db.js:*)",
+      "Bash(pkill:*)",
+      "Bash(node test-job-visibility.js:*)",
+      "Bash(node:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NTdhYmU2ODUyNjc2MDU3ZDc3NGUwMSIsInJvbGUiOiJ0ZWNobmljaWFuIiwiaWF0IjoxNzY3MzUzMzg5LCJleHAiOjE3Njc5NTgxODl9.yNbvG7jFd1WqyE4t2OV_piMINDIgjG1kFBxTjltPYAo\")",
+      "Bash(__NEW_LINE__ curl -X GET http://localhost:5001/api/technician/jobs )"
     ]
   }
 }

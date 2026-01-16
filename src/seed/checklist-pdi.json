@@ -2,7 +2,7 @@
   "serviceType": "PDI",
   "sections": [
     {
-      "section": "Car Details",
+      "section": "Vehicle & Customer Details",
       "items": [
         {
           "key": "car_front_image",
@@ -32,11 +32,6 @@
           "inputType": "text"
         },
         {
-          "key": "vin_number",
-          "label": "VIN number",
-          "inputType": "text"
-        },
-        {
           "key": "car_make",
           "label": "Car make",
           "inputType": "text"
@@ -46,6 +41,17 @@
           "label": "Car model",
           "inputType": "text"
         },
+        {
+          "key": "make_model_year",
+          "label": "Make & Model year",
+          "inputType": "text"
+        },
+        {
+          "key": "vin_number",
+          "label": "VIN number",
+          "inputType": "text"
+        },
+
         {
           "key": "current_odometer_reading",
           "label": "Current odometer reading",
@@ -61,12 +67,16 @@
           "key": "fuel_type",
           "label": "Fuel type",
           "inputType": "dropdown",
-          "options": ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"]
-        },
-        {
-          "key": "report_summary",
-          "label": "Report summary remarks",
-          "inputType": "textarea"
+          "options": [
+            "Petrol",
+            "Diesel",
+            "CNG",
+            "Electric",
+            "Hybrid",
+            "Petrol + CNG",
+            "Petrol + LPG",
+            "Petrol + Hybrid"
+          ]
         }
       ]
     },
@@ -87,10 +97,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "engine_oil_image",
+          "label": "Engine oil image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "coolant_level",
           "label": "Coolant level",
           "inputType": "radio",
           "options": ["Normal", "Level low", "Need to top-up"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "coolant_image",
+          "label": "Coolant image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -101,15 +123,29 @@
           "requiresPhoto": true
         },
         {
+          "key": "brake_oil_image",
+          "label": "Brake oil image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "battery_status",
           "label": "Battery status",
           "inputType": "radio",
           "options": [
             "Normal",
             "Weak",
+            "Need to recharge",
+            "clamp missing",
             "Loose connection",
             "Acid leak found"
           ],
+          "requiresPhoto": true
+        },
+        {
+          "key": "battery_image",
+          "label": "Battery image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -127,8 +163,7 @@
         {
           "key": "engine_sound_file",
           "label": "Engine sound file",
-          "inputType": "image",
-          "requiresPhoto": true
+          "inputType": "audio"
         },
         {
           "key": "engine_vibration",
@@ -156,10 +191,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "turbo_image",
+          "label": "Turbo image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "abs_status",
           "label": "ABS",
           "inputType": "radio",
           "options": ["Available", "Not available"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "abs_image",
+          "label": "ABS image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -178,11 +225,7 @@
           "key": "engine_accessories_belt",
           "label": "Engine accessories belt",
           "inputType": "radio",
-          "options": [
-            "Normal",
-            "Abnormal noise found",
-            "Loosen / Crack found"
-          ]
+          "options": ["Normal", "Abnormal noise found", "Loosen / Crack found"]
         },
         {
           "key": "oil_leaks",
@@ -198,10 +241,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "left_apron_image",
+          "label": "Left apron image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "right_apron",
           "label": "Right apron",
           "inputType": "radio",
           "options": ["Normal", "Defective", "Rusted"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "right_apron_image",
+          "label": "Right apron image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -212,6 +267,12 @@
           "requiresPhoto": true
         },
         {
+          "key": "right_apron_leg_image",
+          "label": "Right apron leg image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "left_apron_leg",
           "label": "Left apron leg",
           "inputType": "radio",
@@ -219,10 +280,22 @@
           "requiresPhoto": true
         },
         {
+          "key": "left_apron_leg_image",
+          "label": "Left apron leg image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "engine_bottom_sump",
           "label": "Engine bottom sump",
           "inputType": "radio",
           "options": ["Normal", "Damaged"],
+          "requiresPhoto": true
+        },
+        {
+          "key": "bottom_sump_image",
+          "label": "Bottom sump image",
+          "inputType": "image",
           "requiresPhoto": true
         },
         {
@@ -301,12 +374,6 @@
           "label": "Front bumper grill",
           "inputType": "radio",
           "options": ["Normal", "Scratched", "Damaged"]
-        },
-        {
-          "key": "front_left_car_image",
-          "label": "Front left car image",
-          "inputType": "image",
-          "requiresPhoto": true
         },
         {
           "key": "front_left_tyre",
@@ -655,7 +722,12 @@
           "key": "orvm_switch",
           "label": "ORVM switch",
           "inputType": "radio",
-          "options": ["Working normal", "Defective"]
+          "options": [
+            "Working normal",
+            "switch not working properly",
+            "Not available",
+            "Defective"
+          ]
         },
         {
           "key": "central_lock_switch",
@@ -699,6 +771,7 @@
           "inputType": "radio",
           "options": ["Working normal", "Defective"]
         },
+
         {
           "key": "cluster_meter_image",
           "label": "Cluster meter image",
@@ -709,7 +782,12 @@
           "key": "paddle_shifters",
           "label": "Paddle shifters",
           "inputType": "radio",
-          "options": ["Working normal", "Defective", "Not available"]
+          "options": [
+            "Working normal",
+            "Damaged",
+            "Not working",
+            "Not available"
+          ]
         },
         {
           "key": "individual_speakers",
@@ -912,8 +990,7 @@
         {
           "key": "location",
           "label": "Location",
-          "inputType": "dropdown",
-          "options": []
+          "inputType": "text"
         },
         {
           "key": "dealer_name",

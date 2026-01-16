@@ -18,7 +18,9 @@ const ChecklistTemplateSchema = new mongoose.Schema({
     inputType: { type: String },                // text, textarea, radio, dropdown, image, multi-image
     options: [{ type: String }],                // choices
     requiresPhoto: { type: Boolean, default: false }, // some checkpoints need photo
-    allowMultiplePhotos: { type: Boolean, default: false } // for multi-image uploads
+    allowMultiplePhotos: { type: Boolean, default: false }, // for multi-image uploads
+    optional: { type: Boolean, default: false }
+
   }],
 
   // sections-based structure (used for PDI - organized by sections)
@@ -30,7 +32,8 @@ const ChecklistTemplateSchema = new mongoose.Schema({
       inputType: { type: String, required: true }, // text, textarea, radio, dropdown, image, multi-image
       options: [{ type: String }],              // choices for radio/dropdown
       requiresPhoto: { type: Boolean, default: false }, // some checkpoints need photo
-      allowMultiplePhotos: { type: Boolean, default: false } // for multi-image uploads
+      allowMultiplePhotos: { type: Boolean, default: false }, // for multi-image uploads
+      optional: { type: Boolean, default: false }
     }]
   }]
 }, {

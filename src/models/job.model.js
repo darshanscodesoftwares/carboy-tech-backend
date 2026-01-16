@@ -3,77 +3,95 @@
 // It is SQL-friendly: we store foreign keys + snapshots for display.
 // Later, SQL tables will map 1:1 to these fields.
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const JobSchema = new mongoose.Schema({
-  // which inspection type
-  serviceType: {
-    type: String,
-    enum: ['UCI', 'PDI', 'VSH'],
-    required: true
-  },
+const JobSchema = new mongoose.Schema(
+  {
+    // which inspection type
+    serviceType: {
+      type: String,
+      enum: ["UCI", "PDI", "VSH"],
+      required: true,
+    },
 
-  // references (normalized)
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: false },
-  vehicleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Vehicle', required: false },
-  technician: { type: mongoose.Schema.Types.ObjectId, ref: 'Technician', required: false },
+    // references (normalized)
+    customerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Customer",
+      required: false,
+    },
+    vehicleId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vehicle",
+      required: false,
+    },
+    technician: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Technician",
+      required: false,
+    },
 
-  // snapshot: data shown to technician
-  customerSnapshot: {
-    name: String,
-    phone: String,
-    email: String
-    // address can be added here if needed
-  },
+    // snapshot: data shown to technician
+    customerSnapshot: {
+      name: String,
+      phone: String,
+      email: String,
+      // address can be added here if needed
+    },
 
-  vehicleSnapshot: {
-    brand: String,
-    model: String,
-    year: Number
-  },
+    vehicleSnapshot: {
+      brand: String,
+      model: String,
+      year: Number,
+    },
 
-  // booking schedule
-  schedule: {
-    date: { type: String, required: true },      // ISO date string
-    slot: { type: String, required: true }       // e.g., "10:00 AM"
-  },
+    // booking schedule
+    schedule: {
+      date: { type: String, required: true }, // ISO date string
+      slot: { type: String, required: true }, // e.g., "10:00 AM"
+    },
 
-  // inspection location (map)
-  location: {
-    address: String,
-    lat: Number,
-    lng: Number
-  },
+    // inspection location (map)
+    location: {
+      address: String,
+      lat: Number,
+      lng: Number,
+    },
 
-  // current job status in the flow
-  status: {
-    type: String,
-    enum: [
-      'pending',       // assigned in future
-      'accepted',      // technician accepted
-      'traveling',     // on the way
-      'reached',       // onsite
-      'in_inspection', // marking checkpoints
-      'completed'      // finished
+    // current job status in the flow
+    status: {
+      type: String,
+      enum: [
+        "pending",
+        "accepted",
+        "traveling",
+        "reached",
+        "in_inspection",
+        "completed",
+        "report_sent", // ✅ ADD THIS
+      ],
+      default: "pending",
+    },
+
+    // placeholder for final report connection
+    reportId: { type: mongoose.Schema.Types.ObjectId, ref: "InspectionReport" },
+
+    // optional: store raw answers inside job (quick MVP)
+    // Later, we can move answers to inspection_reports document.
+    checklistAnswers: [
+      {
+        checkpointKey: String,
+        selectedOption: String, // for radio/dropdown inputs
+        value: String, // for text/textarea inputs
+        notes: String,
+        photoUrl: String, // single photo (for backward compatibility)
+        photoUrls: [String], // multiple photos (for multi-image uploads)
+      },
     ],
-    default: 'pending'
   },
+  {
+    timestamps: true,
+  }
+);
 
-  // placeholder for final report connection
-  reportId: { type: mongoose.Schema.Types.ObjectId, ref: 'InspectionReport' },
-
-  // optional: store raw answers inside job (quick MVP)
-  // Later, we can move answers to inspection_reports document.
-  checklistAnswers: [{
-    checkpointKey: String,
-    selectedOption: String,    // for radio/dropdown inputs
-    value: String,              // for text/textarea inputs
-    notes: String,
-    photoUrl: String,          // single photo (for backward compatibility)
-    photoUrls: [String]         // multiple photos (for multi-image uploads)
-  }]
-}, {
-  timestamps: true
-});
-
-module.exports = mongoose.model('Job', JobSchema);
+module.exports = mongoose.model("Job", JobSchema);

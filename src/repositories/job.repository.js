@@ -22,7 +22,8 @@ module.exports = {
     if (status) query.status = status;
 
     return Job.find(query)
-      .populate('technician', 'name email phone')
+      .populate('technician', 'name')
+      .populate('reportId')
       .sort({ createdAt: -1 })
       .lean(); // lean allowed because read only
   },
@@ -44,6 +45,14 @@ module.exports = {
       { new: true }
     ).lean();
   },
+
+  async updateById(jobId, updateData) {
+  return Job.findByIdAndUpdate(
+    jobId,
+    updateData,
+    { new: true }
+  );
+},
 
   // REMOVE $push — we manually update inside service
   async save(job) {
