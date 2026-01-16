@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 // ------------------------
@@ -25,6 +26,11 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./src/docs/swagger.yaml');
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// ------------------------
+// Static Files - Serve uploads
+// ------------------------
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // ------------------------
 // DEV-ONLY ROUTES
