@@ -27,6 +27,12 @@ const InspectionReportSchema = new mongoose.Schema({
     default: null
   },
 
+  // technician remarks/notes
+  technicianRemarks: {
+    type: String,
+    default: ''
+  },
+
   // embedded checklist answers (snapshot at submission time)
   checklistAnswers: [{
     checkpointKey: String,
