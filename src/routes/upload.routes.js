@@ -70,7 +70,8 @@ router.post("/image", uploadImage.single("image"), (req, res) => {
     return res.status(400).json({ success: false, message: "No image uploaded" });
   }
 
-  const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
   res.json({ success: true, url });
 });
 
@@ -83,7 +84,8 @@ router.post("/audio", uploadAudio.single("audio"), (req, res) => {
     return res.status(400).json({ success: false, message: "No audio uploaded" });
   }
 
-  const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
   res.json({ success: true, url });
 });
 
@@ -96,7 +98,8 @@ router.post("/video", uploadVideo.single("video"), (req, res) => {
     return res.status(400).json({ success: false, message: "No video uploaded" });
   }
 
-  const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
   res.json({ success: true, url });
 });
 
@@ -109,7 +112,8 @@ router.post("/document", uploadDocument.single("document"), (req, res) => {
     return res.status(400).json({ success: false, message: "No document uploaded" });
   }
 
-  const url = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
   res.json({ success: true, url });
 });
 
