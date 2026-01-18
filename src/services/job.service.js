@@ -445,7 +445,7 @@ module.exports = {
   // =====================================================
   // SEND REPORT TO ADMIN (🔥 CRITICAL FIX 🔥)
   // =====================================================
-  async sendReport(jobId) {
+  async sendReport(jobId, remarks) {
     const job = await jobRepository.findById(jobId);
     if (!job) throw new Error("Job not found");
 
@@ -466,6 +466,7 @@ module.exports = {
     if (report) {
       report = await inspectionRepository.update(report._id, {
         checklistAnswers: dedupedAnswers,
+        technicianRemarks: remarks || "",
         submittedAt: new Date(),
       });
     } else {
@@ -474,6 +475,7 @@ module.exports = {
         technician: job.technician, // ✅ FIXED
         checklistTemplate: job.checklistTemplate || null,
         checklistAnswers: dedupedAnswers,
+        technicianRemarks: remarks || "",
         submittedAt: new Date(),
       });
     }
