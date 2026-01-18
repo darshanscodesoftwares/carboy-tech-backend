@@ -47,12 +47,30 @@ module.exports = {
   },
 
   async updateById(jobId, updateData) {
-  return Job.findByIdAndUpdate(
-    jobId,
-    updateData,
-    { new: true }
-  );
-},
+    return Job.findByIdAndUpdate(
+      jobId,
+      updateData,
+      { new: true }
+    );
+  },
+
+  // atomic checkpoint update (if exists)
+  async updateCheckpoint(jobId, checkpointKey, answer) {
+    return Job.findOneAndUpdate(
+      { _id: jobId, "checklistAnswers.checkpointKey": checkpointKey },
+      { $set: { "checklistAnswers.$": answer } },
+      { new: true }
+    );
+  },
+
+  // atomic checkpoint add (if not exists)
+  async addCheckpoint(jobId, answer) {
+    return Job.findByIdAndUpdate(
+      jobId,
+      { $push: { checklistAnswers: answer } },
+      { new: true }
+    );
+  },
 
   // REMOVE $push — we manually update inside service
   async save(job) {
