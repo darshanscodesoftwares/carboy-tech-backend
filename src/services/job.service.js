@@ -413,28 +413,20 @@ module.exports = {
   },
 
   // =====================================================
-  // SAVE / UPDATE CHECKPOINT ANSWER
+  // SAVE / UPDATE CHECKPOINT ANSWER (ATOMIC)
   // =====================================================
   async submitCheckpoint(jobId, answer) {
-    const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error("Job not found");
+    // Try to update existing checkpoint atomically
+    let job = await jobRepository.updateCheckpoint(jobId, answer.checkpointKey, answer);
 
-    job.checklistAnswers ||= [];
-
-    const index = job.checklistAnswers.findIndex(
-      (a) => a.checkpointKey === answer.checkpointKey
-    );
-
-    if (index !== -1) {
-      job.checklistAnswers[index] = {
-        ...job.checklistAnswers[index],
-        ...answer,
-      };
-    } else {
-      job.checklistAnswers.push(answer);
+    // If checkpoint doesn't exist, add it atomically
+    if (!job) {
+      job = await jobRepository.addCheckpoint(jobId, answer);
     }
 
-    return jobRepository.save(job);
+    if (!job) throw new Error("Job not found");
+
+    return job;
   },
 
   // =====================================================
