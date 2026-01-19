@@ -1,11 +1,10 @@
 // Job Controller
 // Handles all job-related APIs for technician flow.
 
-const jobService = require('../services/job.service');
-const response = require('../utils/response');
+const jobService = require("../services/job.service");
+const response = require("../utils/response");
 
 module.exports = {
-
   // GET /jobs
   async listJobsByTechnician(req, res, next) {
     try {
@@ -45,7 +44,7 @@ module.exports = {
   async startTravel(req, res, next) {
     try {
       const jobId = req.params.jobId;
-      const job = await jobService.updateStatus(jobId, 'traveling');
+      const job = await jobService.updateStatus(jobId, "traveling");
       return response.success(res, job);
     } catch (err) {
       next(err);
@@ -56,7 +55,7 @@ module.exports = {
   async reachedLocation(req, res, next) {
     try {
       const jobId = req.params.jobId;
-      const job = await jobService.updateStatus(jobId, 'reached');
+      const job = await jobService.updateStatus(jobId, "reached");
       return response.success(res, job);
     } catch (err) {
       next(err);
@@ -67,7 +66,7 @@ module.exports = {
   async startInspection(req, res, next) {
     try {
       const jobId = req.params.jobId;
-      const job = await jobService.updateStatus(jobId, 'in_inspection');
+      const job = await jobService.updateStatus(jobId, "in_inspection");
       return response.success(res, job);
     } catch (err) {
       next(err);
@@ -136,10 +135,14 @@ module.exports = {
     try {
       const jobId = req.params.jobId;
       const { remarks } = req.body || {};
+
+      // ✅ ADD THIS LINE
+      console.log("🟢 Tech BE controller received remarks:", remarks);
+
       const job = await jobService.sendReport(jobId, remarks);
       return response.success(res, job);
     } catch (err) {
       next(err);
     }
-  }
+  },
 };
