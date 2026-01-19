@@ -135,7 +135,7 @@ module.exports = {
   async sendReport(req, res, next) {
     try {
       const jobId = req.params.jobId;
-      const { remarks } = req.body;
+      const { remarks } = req.body || {};
       const job = await jobService.sendReport(jobId, remarks);
       return response.success(res, job);
     } catch (err) {
