@@ -2,10 +2,9 @@
 // Clean, document-based, supports save().
 // No `.lean()` anywhere for write operations.
 
-const Job = require('../models/job.model');
+const Job = require("../models/job.model");
 
 module.exports = {
-
   // create job
   async create(data) {
     return Job.create(data); // returns document
@@ -16,42 +15,38 @@ module.exports = {
     return Job.findById(id); // DO NOT LEAN
   },
 
-  // list jobs (read-only -> lean OK)
   async findByTechnician(technicianId, status) {
-    const query = { technician: technicianId };
+    const query = {
+      technician: technicianId,
+      status: { $ne: "report_sent" }, // 🔥 hide finalised jobs
+    };
+
+    // allow explicit status filter if needed
     if (status) query.status = status;
 
     return Job.find(query)
-      .populate('technician', 'name')
-      .populate('reportId')
+      .populate("technician", "name")
+      .populate("reportId")
       .sort({ createdAt: -1 })
-      .lean(); // lean allowed because read only
+      .lean(); // safe (read-only)
   },
 
   // update status (lean ok because nothing to save again)
   async updateStatus(jobId, status) {
-    return Job.findByIdAndUpdate(
-      jobId,
-      { status },
-      { new: true }
-    ).lean();
+    return Job.findByIdAndUpdate(jobId, { status }, { new: true }).lean();
   },
 
   // technician accepts job
   async assignTechnician(jobId, technicianId) {
     return Job.findByIdAndUpdate(
       jobId,
-      { technician: technicianId, status: 'accepted' },
-      { new: true }
+      { technician: technicianId, status: "accepted" },
+      { new: true },
     ).lean();
   },
 
   async updateById(jobId, updateData) {
-    return Job.findByIdAndUpdate(
-      jobId,
-      updateData,
-      { new: true }
-    );
+    return Job.findByIdAndUpdate(jobId, updateData, { new: true });
   },
 
   // atomic checkpoint update (if exists)
@@ -59,7 +54,7 @@ module.exports = {
     return Job.findOneAndUpdate(
       { _id: jobId, "checklistAnswers.checkpointKey": checkpointKey },
       { $set: { "checklistAnswers.$": answer } },
-      { new: true }
+      { new: true },
     );
   },
 
@@ -68,12 +63,12 @@ module.exports = {
     return Job.findByIdAndUpdate(
       jobId,
       { $push: { checklistAnswers: answer } },
-      { new: true }
+      { new: true },
     );
   },
 
   // REMOVE $push — we manually update inside service
   async save(job) {
     return job.save(); // direct mongoose save
-  }
+  },
 };
