@@ -43,7 +43,7 @@
         },
         {
           "key": "make_model_year",
-          "label": "Make & Model year",
+          "label": "Year",
           "inputType": "text"
         },
         {
