@@ -44,6 +44,7 @@ const documentFilter = (req, file, cb) => {
     "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/html"
   ];
   if (allowed.includes(file.mimetype)) cb(null, true);
   else cb(new Error("Only document files allowed"), false);
@@ -56,6 +57,25 @@ const uploadImage = multer({ storage, fileFilter: imageFilter });
 const uploadAudio = multer({ storage, fileFilter: audioFilter });
 const uploadVideo = multer({ storage, fileFilter: videoFilter });
 const uploadDocument = multer({ storage, fileFilter: documentFilter });
+
+/* ==============================
+   🆕 OBD UPLOAD (NEW)
+================================ */
+const uploadOBD = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    // allow images + documents
+    if (
+      file.mimetype.startsWith("image/") ||
+      file.mimetype === "application/pdf" ||
+      file.mimetype === "text/html"
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid OBD file type"), false);
+    }
+  },
+});
 
 // ==============================
 // Routes
@@ -116,5 +136,51 @@ router.post("/document", uploadDocument.single("document"), (req, res) => {
   const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
   res.json({ success: true, url });
 });
+
+/* =====================================================
+   🆕 POST /api/technician/uploads/obd
+   accepts:
+   - url (body)
+   - file (optional)
+   - images[] (optional)
+===================================================== */
+router.post(
+  "/obd",
+  uploadOBD.fields([
+    { name: "file", maxCount: 1 },
+    { name: "images", maxCount: 10 },
+  ]),
+  (req, res) => {
+    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+
+    const fileUrl = req.files?.file?.[0]
+      ? `${protocol}://${req.get("host")}/uploads/${req.files.file[0].filename}`
+      : null;
+
+    const images = req.files?.images
+      ? req.files.images.map(
+          (f) => `${protocol}://${req.get("host")}/uploads/${f.filename}`
+        )
+      : [];
+
+    const { url } = req.body; // web OBD report link
+
+    if (!url && !fileUrl && images.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "OBD requires url or file or images",
+      });
+    }
+
+    res.json({
+      success: true,
+      obd: {
+        url: url || null,
+        fileUrl,
+        images,
+      },
+    });
+  }
+);
 
 module.exports = router;
