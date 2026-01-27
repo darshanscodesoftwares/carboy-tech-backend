@@ -40,39 +40,69 @@ const videoFilter = (req, file, cb) => {
 };
 
 const documentFilter = (req, file, cb) => {
+  const mime = file.mimetype;
+  const ext = path.extname(file.originalname).toLowerCase();
+
   const allowedMimeTypes = [
-    // PDFs
     "application/pdf",
 
-    // Word
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 
-    // Excel
     "application/vnd.ms-excel",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 
-    // CSV / TXT
     "text/csv",
     "text/plain",
 
-    // Archives
     "application/zip",
     "application/x-zip-compressed",
     "application/x-rar-compressed",
 
-    // Images (OBD screenshots)
     "image/jpeg",
     "image/png",
     "image/webp",
+
+    // HTML
+    "text/html",
+    "application/xhtml+xml",
+
+    // Mobile chrome
+    "multipart/related",
+    "message/rfc822",
+    "application/x-mimearchive",
+
+    // fallback
+    "application/octet-stream",
   ];
 
-  if (allowedMimeTypes.includes(file.mimetype)) {
+  const allowedExts = [
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".csv",
+    ".txt",
+    ".zip",
+    ".rar",
+    ".html",
+    ".htm",
+    ".mht",
+    ".mhtml",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".webp",
+  ];
+
+  if (allowedMimeTypes.includes(mime) || allowedExts.includes(ext)) {
     cb(null, true);
   } else {
-    cb(new Error(`Unsupported file type: ${file.mimetype}`), false);
+    cb(new Error(`Unsupported file type: ${mime}`), false);
   }
 };
+
 
 
 // ==============================
