@@ -40,15 +40,40 @@ const videoFilter = (req, file, cb) => {
 };
 
 const documentFilter = (req, file, cb) => {
-  const allowed = [
+  const allowedMimeTypes = [
+    // PDFs
     "application/pdf",
+
+    // Word
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "text/html"
+
+    // Excel
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+
+    // CSV / TXT
+    "text/csv",
+    "text/plain",
+
+    // Archives
+    "application/zip",
+    "application/x-zip-compressed",
+    "application/x-rar-compressed",
+
+    // Images (OBD screenshots)
+    "image/jpeg",
+    "image/png",
+    "image/webp",
   ];
-  if (allowed.includes(file.mimetype)) cb(null, true);
-  else cb(new Error("Only document files allowed"), false);
+
+  if (allowedMimeTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error(`Unsupported file type: ${file.mimetype}`), false);
+  }
 };
+
 
 // ==============================
 // Upload instances
@@ -182,5 +207,15 @@ router.post(
     });
   }
 );
+
+router.use((err, req, res, next) => {
+  console.error("Upload error:", err.message);
+
+  res.status(400).json({
+    success: false,
+    message: err.message || "File upload failed",
+  });
+});
+
 
 module.exports = router;
