@@ -8,6 +8,12 @@ const path = require('path');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+if (process.env.NODE_ENV === "production") {
+  console.error("❌ Seeding is disabled in PRODUCTION environment");
+  console.error("👉 Refusing to run seed.js");
+  process.exit(1);
+}
+
 const { connectDatabase } = require('../config/database');
 
 const ChecklistTemplate = require('../models/checklist.model');

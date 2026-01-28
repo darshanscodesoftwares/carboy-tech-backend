@@ -6,10 +6,16 @@ const mongoose = require('mongoose');
 async function connectDatabase() {
   const uri = process.env.MONGODB_URI;
 
-  if (!uri) {
+    if (!uri) {
     console.error('❌ MONGODB_URI is not set in .env');
     process.exit(1);
   }
+
+  // 👇 ADD THIS LINE HERE
+  console.log(
+    '🔗 MongoDB URI:',
+    uri.includes('localhost') || uri.includes('127.0.0.1') ? 'LOCAL' : 'ATLAS'
+  );
 
   try {
     await mongoose.connect(uri, {
