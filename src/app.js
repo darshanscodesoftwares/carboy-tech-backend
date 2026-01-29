@@ -12,6 +12,7 @@ const uploadRoutes = require("./routes/upload.routes");
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
+  "http://localhost:5175",
   "https://carboy-tech-frontend.onrender.com",
   "https://carboy-admin-frontend.onrender.com",
 ];
