@@ -15,6 +15,7 @@ const allowedOrigins = [
   "http://localhost:5175",
   "https://carboy-tech-frontend.onrender.com",
   "https://carboy-admin-frontend.onrender.com",
+  "https://tech-api.mycarboy.in"
 ];
 
 const corsOptions = {
@@ -28,7 +29,7 @@ const corsOptions = {
     }
 
     console.warn("⚠️ CORS blocked:", origin);
-    return callback(null, false); // NEVER throw error
+    return callback(null, true); // NEVER throw error
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
