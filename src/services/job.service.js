@@ -432,15 +432,35 @@ module.exports = {
   // =====================================================
   // COMPLETE INSPECTION (NO ADMIN VISIBILITY YET)
   // =====================================================
-  async completeInspection(jobId) {
-    const job = await jobRepository.findById(jobId);
-    if (!job) throw new Error("Job not found");
+  async completeInspection(jobId, { remarks = "" } = {}) {
+  const job = await jobRepository.findById(jobId);
+  if (!job) throw new Error("Job not found");
 
-    await jobRepository.updateById(jobId, { status: "completed" });
-    await technicianRepository.updateStatus(job.technician, "completed");
+  await jobRepository.updateById(jobId, {
+    status: "completed",
+    technicianRemarks: remarks || "",   // 🔥 ADD THIS
+  });
 
-    return job;
-  },
+  await technicianRepository.updateStatus(job.technician, "completed");
+
+  return job;
+},
+
+// =====================================================
+// UPDATE TECHNICIAN REMARKS (SAFE, NO STATUS CHECK)
+// =====================================================
+async updateTechnicianRemarks(jobId, remarks = "") {
+  const job = await jobRepository.findById(jobId);
+  if (!job) throw new Error("Job not found");
+
+  await jobRepository.updateById(jobId, {
+    technicianRemarks: remarks || "",
+  });
+
+  return { jobId, technicianRemarks: remarks || "" };
+},
+
+
 
   // =====================================================
   // SEND REPORT TO ADMIN (🔥 CRITICAL FIX 🔥)
@@ -480,10 +500,11 @@ module.exports = {
       });
     }
 
-    // 🔑 LINK REPORT TO JOB
+    // 🔑 LINK REPORT TO JOB + MIRROR REMARKS
     await jobRepository.updateById(job._id, {
       inspectionReport: report._id,
       status: "report_sent",
+      technicianRemarks: remarks || "",
     });
 
     return {

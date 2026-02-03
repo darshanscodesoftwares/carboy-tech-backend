@@ -88,6 +88,12 @@ const JobSchema = new mongoose.Schema(
         photoUrls: [String], // multiple photos (for multi-image uploads)
       },
     ],
+
+    // technician remarks (mirrored from InspectionReport for persistence)
+    technicianRemarks: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

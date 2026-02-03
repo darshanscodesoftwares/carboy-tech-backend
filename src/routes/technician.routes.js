@@ -35,6 +35,13 @@ router.post('/jobs/:jobId/start-inspection', authTechnician, jobController.start
 router.get('/jobs/:jobId/checklist', authTechnician, jobController.getChecklist);
 router.post('/jobs/:jobId/checkpoints', authTechnician, jobController.submitCheckpoint);
 
+// Save technician remarks (can be called anytime during inspection)
+router.patch(
+  '/jobs/:jobId/remarks',
+  authTechnician,
+  jobController.updateTechnicianRemarks
+);
+
 // Complete inspection
 router.post('/jobs/:jobId/complete', authTechnician, jobController.completeInspection);
 router.get('/jobs/:jobId/completed-summary', authTechnician, jobController.completedSummary);

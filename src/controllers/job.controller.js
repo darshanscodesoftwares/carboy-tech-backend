@@ -145,4 +145,18 @@ module.exports = {
       next(err);
     }
   },
+
+async updateTechnicianRemarks(req, res, next) {
+  try {
+    const { jobId } = req.params;
+    const { remarks = "" } = req.body;
+
+    const result = await jobService.updateTechnicianRemarks(jobId, remarks);
+
+    return response.success(res, result);
+  } catch (err) {
+    next(err); // let your global error handler handle it
+  }
+}
+
 };
