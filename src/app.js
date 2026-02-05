@@ -42,6 +42,16 @@ const corsOptions = {
 // // ✅ CORRECT FOR YOUR STACK
 // app.use(cors(corsOptions));
 // app.options(/.*/, cors(corsOptions));
+/*
+  👉 IMPORTANT RULE:
+  - LOCAL → Express handles CORS
+  - PRODUCTION → Nginx handles CORS
+*/
+if (process.env.NODE_ENV !== "production") {
+  console.log("🟢 Using Express CORS (LOCAL)");
+  app.use(cors(corsOptions));
+  app.options(/.*/, cors(corsOptions));
+}
 
 /* ================= BODY ================= */
 
