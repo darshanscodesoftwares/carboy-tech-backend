@@ -4,6 +4,42 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+
+function addCors(res) {
+ res.set({
+   "Access-Control-Allow-Origin": "*",
+   "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+   "Access-Control-Allow-Headers": "Content-Type, Authorization",
+ });
+}
+
+// ✅ HANDLE CORS PREFLIGHT SAFELY
+router.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.set({
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    });
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+
+
+router.use((req, res, next) => {
+ console.log("📸 UPLOAD HIT:", {
+   method: req.method,
+   url: req.originalUrl,
+   contentType: req.headers["content-type"],
+   size: req.headers["content-length"],
+ });
+ next();
+});
+
+
+
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, "../../uploads");
 if (!fs.existsSync(uploadDir)) {
@@ -145,8 +181,9 @@ router.post("/image", uploadImage.single("image"), (req, res) => {
    return res.status(400).json({ success: false, message: "No image uploaded" });
  }
 
- const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+ const protocol = req.headers["x-forwarded-proto"] === "https" ? "https" : "https"; // FORCE HTTPS;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+addCors(res);
  res.json({ success: true, url });
 });
 
@@ -159,8 +196,9 @@ router.post("/audio", uploadAudio.single("audio"), (req, res) => {
    return res.status(400).json({ success: false, message: "No audio uploaded" });
  }
 
- const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+ const protocol = req.headers["x-forwarded-proto"] === "https" ? "https" : "https"; // FORCE HTTPS;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+addCors(res);
  res.json({ success: true, url });
 });
 
@@ -173,8 +211,9 @@ router.post("/video", uploadVideo.single("video"), (req, res) => {
    return res.status(400).json({ success: false, message: "No video uploaded" });
  }
 
- const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+ const protocol = req.headers["x-forwarded-proto"] === "https" ? "https" : "https"; // FORCE HTTPS;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+addCors(res);
  res.json({ success: true, url });
 });
 
@@ -187,8 +226,9 @@ router.post("/document", uploadDocument.single("document"), (req, res) => {
    return res.status(400).json({ success: false, message: "No document uploaded" });
  }
 
- const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+ const protocol = req.headers["x-forwarded-proto"] === "https" ? "https" : "https"; // FORCE HTTPS;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+addCors(res);
  res.json({ success: true, url });
 });
 
@@ -206,7 +246,7 @@ router.post(
    { name: "images", maxCount: 10 },
  ]),
  (req, res) => {
-   const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+   const protocol = req.headers["x-forwarded-proto"] === "https" ? "https" : "https"; // FORCE HTTPS;
 
    const fileUrl = req.files?.file?.[0]
      ? `${protocol}://${req.get("host")}/uploads/${req.files.file[0].filename}`
@@ -239,13 +279,20 @@ router.post(
 );
 
 router.use((err, req, res, next) => {
- console.error("Upload error:", err.message);
+  console.error("Upload error:", err.message);
 
- res.status(400).json({
-   success: false,
-   message: err.message || "File upload failed",
- });
+  res.set({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  });
+
+  res.status(400).json({
+    success: false,
+    message: err.message || "File upload failed",
+  });
 });
+
 
 
 module.exports = router;
