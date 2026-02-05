@@ -13,15 +13,15 @@ function addCors(res) {
  });
 }
 
-// ✅ FIX: Allow CORS preflight for uploads
-router.options("*", (req, res) => {
- res.set({
-   "Access-Control-Allow-Origin": "*",
-   "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-   "Access-Control-Allow-Headers": "Content-Type, Authorization",
- });
- return res.sendStatus(200);
+router.options("/*", (req, res) => {
+  res.set({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  });
+  return res.sendStatus(200);
 });
+
 
 router.use((req, res, next) => {
  console.log("📸 UPLOAD HIT:", {
