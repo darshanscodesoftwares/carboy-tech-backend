@@ -279,13 +279,20 @@ router.post(
 );
 
 router.use((err, req, res, next) => {
- console.error("Upload error:", err.message);
+  console.error("Upload error:", err.message);
 
- res.status(400).json({
-   success: false,
-   message: err.message || "File upload failed",
- });
+  res.set({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  });
+
+  res.status(400).json({
+    success: false,
+    message: err.message || "File upload failed",
+  });
 });
+
 
 
 module.exports = router;
