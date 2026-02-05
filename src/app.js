@@ -36,10 +36,12 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-// ✅ ONLY ONE CORS MIDDLEWARE (no wildcard)
-// ✅ CORRECT FOR YOUR STACK
-app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
+// ✅ LET NGINX HANDLE CORS — DO NOTHING IN EXPRESS
+// (keep body parsers etc., but NO cors())
+
+// // ✅ CORRECT FOR YOUR STACK
+// app.use(cors(corsOptions));
+// app.options(/.*/, cors(corsOptions));
 
 /* ================= BODY ================= */
 
