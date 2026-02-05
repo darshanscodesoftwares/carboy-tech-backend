@@ -37,8 +37,9 @@ const corsOptions = {
 };
 
 // ✅ ONLY ONE CORS MIDDLEWARE (no wildcard)
+// ✅ CORRECT FOR YOUR STACK
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 /* ================= BODY ================= */
 
