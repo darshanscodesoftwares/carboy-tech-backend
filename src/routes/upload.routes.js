@@ -13,14 +13,19 @@ function addCors(res) {
  });
 }
 
-router.options("/*", (req, res) => {
-  res.set({
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  });
-  return res.sendStatus(200);
+// ✅ HANDLE CORS PREFLIGHT SAFELY
+router.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.set({
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    });
+    return res.sendStatus(200);
+  }
+  next();
 });
+
 
 
 router.use((req, res, next) => {
