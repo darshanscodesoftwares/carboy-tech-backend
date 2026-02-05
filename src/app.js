@@ -7,7 +7,7 @@ app.set("trust proxy", 1);
 
 const uploadRoutes = require("./routes/upload.routes");
 
-/* ================= CORS CONFIG (FINAL FIX) ================= */
+/* ================= CORS CONFIG (CLEAN FIX) ================= */
 
 const allowedOrigins = [
   "http://localhost:5173",
@@ -29,15 +29,16 @@ const corsOptions = {
     }
 
     console.warn("⚠️ CORS blocked:", origin);
-    return callback(null, true); // NEVER throw error
+    return callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-app.use(cors());
-app.options(/.*/, cors(corsOptions));
+// ✅ ONLY ONE CORS MIDDLEWARE (no wildcard)
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 /* ================= BODY ================= */
 
