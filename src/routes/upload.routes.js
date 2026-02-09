@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { compressImage } = require("../utils/imageCompressor");
+const { compressVideo } = require("../utils/videoCompressor");
 
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, "../../uploads");
@@ -146,6 +147,48 @@ const uploadOBD = multer({
 // ==============================
 
 /**
+* POST /api/technician/uploads/image
+* field name: image
+*/
+router.post("/image", uploadImage.single("image"), async (req, res) => {
+ if (!req.file) {
+   return res.status(400).json({ success: false, message: "No image uploaded" });
+ }
+
+ const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+ const tmpPath = req.file.path;
+ const compressedFilename = `compressed-${Date.now()}-${req.file.originalname.replace(/\s+/g, "-")}`;
+ const finalPath = path.join(uploadDir, compressedFilename);
+
+ try {
+   console.log("🔵 [UPLOAD-IMAGE] Checklist image received:", {
+     originalName: req.file.originalname,
+     mime: req.file.mimetype,
+     tempPath: req.file.path,
+   });
+   await compressImage(tmpPath, finalPath);
+   fs.unlinkSync(tmpPath);
+   const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+   console.log("🟢 [UPLOAD-IMAGE] Checklist image saved:", {
+     savedAs: compressedFilename,
+     publicUrl: url,
+   });
+   res.json({ success: true, url });
+ } catch (err) {
+   console.error("🔴 [IMG-COMPRESS-ERROR]", {
+     file: req.file?.path,
+     error: err.message,
+   });
+   try {
+     const fallbackPath = path.join(uploadDir, req.file.filename);
+     fs.renameSync(tmpPath, fallbackPath);
+     const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+     res.json({ success: true, url });
+   } catch (fallbackErr) {
+     console.error("Image fallback failed:", fallbackErr);
+     res.status(500).json({ success: false, message: "Image processing failed" });
+   }
+ }
  * POST /api/technician/uploads/image
  * field name: image
  */
@@ -245,7 +288,7 @@ router.post("/audio", uploadAudio.single("audio"), (req, res) => {
 * POST /api/technician/uploads/video
 * field name: video
 */
-router.post("/video", uploadVideo.single("video"), (req, res) => {
+router.post("/video", uploadVideo.single("video"), async (req, res) => {
  if (!req.file) {
    return res.status(400).json({ success: false, message: "No video uploaded" });
  }
@@ -255,8 +298,56 @@ router.post("/video", uploadVideo.single("video"), (req, res) => {
  fs.renameSync(tmpPath, finalPath);
 
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
- const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
- res.json({ success: true, url });
+ const tmpPath = req.file.path;
+ const compressedFilename = `compressed-${Date.now()}-${req.file.originalname.replace(/\s+/g, "-")}`;
+ const finalPath = path.join(uploadDir, compressedFilename);
+
+ try {
+   console.log("🔵 [UPLOAD-VIDEO] Checklist video received:", {
+     originalName: req.file.originalname,
+     mime: req.file.mimetype,
+     tempPath: req.file.path,
+     size: req.file.size,
+   });
+
+   await compressVideo(tmpPath, finalPath);
+   fs.unlinkSync(tmpPath);
+
+   const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+
+   console.log("🟢 [UPLOAD-VIDEO] Checklist video saved (compressed):", {
+     savedAs: compressedFilename,
+     publicUrl: url,
+   });
+
+   return res.json({ success: true, url });
+ } catch (err) {
+   console.error("🔴 [VIDEO-COMPRESS-ERROR]", {
+     file: req.file?.path,
+     error: err.message,
+   });
+
+   try {
+     const fallbackPath = path.join(uploadDir, req.file.filename);
+     fs.renameSync(tmpPath, fallbackPath);
+
+     const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
+     console.warn("🟡 [UPLOAD-VIDEO] Using original video (fallback):", {
+       originalFile: req.file.filename,
+       publicUrl: url,
+     });
+
+     return res.json({ success: true, url });
+   } catch (fallbackErr) {
+     console.error("🔴 [VIDEO-FALLBACK-FAILED]", fallbackErr);
+
+     return res.status(500).json({
+       success: false,
+       message: "Video processing failed",
+     });
+   }
+ }
 });
 
 /**
@@ -313,6 +404,47 @@ router.post(
          fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
          console.log("🟢 [UPLOAD-OBD-FILE] OBD image file saved:", {
            savedAs: compressedFilename,
+           publicUrl: fileUrl,
+         });
+       } catch (err) {
+         console.error("Image compression failed:", err);
+         const fallbackPath = path.join(uploadDir, f.filename);
+         fs.renameSync(tmpPath, fallbackPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+       }
+     } else if (f.mimetype.startsWith("video/")) {
+       const tmpPath = f.path;
+       const compressedFilename = `compressed-${Date.now()}-${f.originalname.replace(/\s+/g, "-")}`;
+       const finalPath = path.join(uploadDir, compressedFilename);
+
+       try {
+         console.log("🔵 [UPLOAD-VIDEO] OBD video received:", {
+           originalName: f.originalname,
+           mime: f.mimetype,
+           tempPath: f.path,
+           size: f.size,
+         });
+
+         await compressVideo(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+
+         console.log("🟢 [UPLOAD-VIDEO] OBD video saved (compressed):", {
+           savedAs: compressedFilename,
+           publicUrl: fileUrl,
+         });
+       } catch (err) {
+         console.error("🔴 [VIDEO-COMPRESS-ERROR]", {
+           file: f?.path,
+           error: err.message,
+         });
+
+         const fallbackPath = path.join(uploadDir, f.filename);
+         fs.renameSync(tmpPath, fallbackPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+
+         console.warn("🟡 [UPLOAD-VIDEO] Using original video (fallback):", {
+           originalFile: f.filename,
            publicUrl: fileUrl,
          });
          await compressImage(tmpPath, finalPath);
