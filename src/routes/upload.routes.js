@@ -132,6 +132,7 @@ const uploadOBD = multer({
    // allow images + documents
    if (
      file.mimetype.startsWith("image/") ||
+     file.mimetype.startsWith("video/") ||
      file.mimetype === "application/pdf" ||
      file.mimetype === "text/html"
    ) {
@@ -165,6 +166,7 @@ router.post("/image", uploadImage.single("image"), async (req, res) => {
      originalName: req.file.originalname,
      mime: req.file.mimetype,
      tempPath: req.file.path,
+     size: req.file.size,
    });
    await compressImage(tmpPath, finalPath);
    fs.unlinkSync(tmpPath);
@@ -183,86 +185,23 @@ router.post("/image", uploadImage.single("image"), async (req, res) => {
      const fallbackPath = path.join(uploadDir, req.file.filename);
      fs.renameSync(tmpPath, fallbackPath);
      const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+     console.warn("🟡 [UPLOAD-IMAGE] Using original image (fallback):", {
+       originalFile: req.file.filename,
+       publicUrl: url,
+     });
      res.json({ success: true, url });
    } catch (fallbackErr) {
-     console.error("Image fallback failed:", fallbackErr);
+     console.error("🔴 [IMG-FALLBACK-FAILED]", fallbackErr);
+     if (fs.existsSync(tmpPath)) {
+       try {
+         fs.unlinkSync(tmpPath);
+       } catch (cleanupErr) {
+         console.error("🔴 [IMG-FALLBACK-CLEANUP-FAILED]", cleanupErr);
+       }
+     }
      res.status(500).json({ success: false, message: "Image processing failed" });
    }
  }
- * POST /api/technician/uploads/image
- * field name: image
- */
-router.post("/image", uploadImage.single("image"), async (req, res) => {
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No image uploaded" });
-  }
-
-  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
-  const tmpPath = req.file.path;
-
-  const compressedFilename = `compressed-${Date.now()}-${req.file.originalname.replace(
-    /\s+/g,
-    "-"
-  )}`;
-
-  const finalPath = path.join(uploadDir, compressedFilename);
-
-  try {
-    console.log("🔵 [UPLOAD-IMAGE] Checklist image received:", {
-      originalName: req.file.originalname,
-      mime: req.file.mimetype,
-      tempPath: req.file.path,
-      size: req.file.size,
-    });
-
-    // Try to compress
-    await compressImage(tmpPath, finalPath);
-
-    // Remove original file after successful compression
-    fs.unlinkSync(tmpPath);
-
-    const url = `${protocol}://${req.get(
-      "host"
-    )}/uploads/${compressedFilename}`;
-
-    console.log("🟢 [UPLOAD-IMAGE] Checklist image saved (compressed):", {
-      savedAs: compressedFilename,
-      publicUrl: url,
-    });
-
-    return res.json({ success: true, url });
-  } catch (err) {
-    console.error("🔴 [IMG-COMPRESS-ERROR]", {
-      file: req.file?.path,
-      error: err.message,
-    });
-
-    try {
-      // === FALLBACK: keep original file ===
-      const fallbackPath = path.join(uploadDir, req.file.filename);
-      fs.renameSync(tmpPath, fallbackPath);
-
-      const url = `${protocol}://${req.get(
-        "host"
-      )}/uploads/${req.file.filename}`;
-
-      console.warn("🟡 [UPLOAD-IMAGE] Using original image (fallback):", {
-        originalFile: req.file.filename,
-        publicUrl: url,
-      });
-
-      return res.json({ success: true, url });
-    } catch (fallbackErr) {
-      console.error("🔴 [IMG-FALLBACK-FAILED]", fallbackErr);
-
-      return res.status(500).json({
-        success: false,
-        message: "Image processing failed",
-      });
-    }
-  }
 });
 
 
@@ -292,10 +231,6 @@ router.post("/video", uploadVideo.single("video"), async (req, res) => {
  if (!req.file) {
    return res.status(400).json({ success: false, message: "No video uploaded" });
  }
-
- const tmpPath = req.file.path;
- const finalPath = path.join(uploadDir, req.file.filename);
- fs.renameSync(tmpPath, finalPath);
 
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
  const tmpPath = req.file.path;
@@ -341,6 +276,13 @@ router.post("/video", uploadVideo.single("video"), async (req, res) => {
      return res.json({ success: true, url });
    } catch (fallbackErr) {
      console.error("🔴 [VIDEO-FALLBACK-FAILED]", fallbackErr);
+     if (fs.existsSync(tmpPath)) {
+       try {
+         fs.unlinkSync(tmpPath);
+       } catch (cleanupErr) {
+         console.error("🔴 [VIDEO-FALLBACK-CLEANUP-FAILED]", cleanupErr);
+       }
+     }
 
      return res.status(500).json({
        success: false,
@@ -398,6 +340,7 @@ router.post(
            originalName: f.originalname,
            mime: f.mimetype,
            tempPath: f.path,
+           size: f.size,
          });
          await compressImage(tmpPath, finalPath);
          fs.unlinkSync(tmpPath);
@@ -407,10 +350,28 @@ router.post(
            publicUrl: fileUrl,
          });
        } catch (err) {
-         console.error("Image compression failed:", err);
-         const fallbackPath = path.join(uploadDir, f.filename);
-         fs.renameSync(tmpPath, fallbackPath);
-         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+         console.error("🔴 [OBD-IMG-COMPRESS-ERROR]", {
+           file: f?.path,
+           error: err.message,
+         });
+         try {
+           const fallbackPath = path.join(uploadDir, f.filename);
+           fs.renameSync(tmpPath, fallbackPath);
+           fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+           console.warn("🟡 [UPLOAD-OBD-FILE] Using original image (fallback):", {
+             originalFile: f.filename,
+             publicUrl: fileUrl,
+           });
+         } catch (fallbackErr) {
+           console.error("🔴 [OBD-IMG-FALLBACK-FAILED]", fallbackErr);
+           if (fs.existsSync(tmpPath)) {
+             try {
+               fs.unlinkSync(tmpPath);
+             } catch (cleanupErr) {
+               console.error("🔴 [OBD-IMG-FALLBACK-CLEANUP-FAILED]", cleanupErr);
+             }
+           }
+         }
        }
      } else if (f.mimetype.startsWith("video/")) {
        const tmpPath = f.path;
@@ -439,22 +400,25 @@ router.post(
            error: err.message,
          });
 
-         const fallbackPath = path.join(uploadDir, f.filename);
-         fs.renameSync(tmpPath, fallbackPath);
-         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+         try {
+           const fallbackPath = path.join(uploadDir, f.filename);
+           fs.renameSync(tmpPath, fallbackPath);
+           fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
 
-         console.warn("🟡 [UPLOAD-VIDEO] Using original video (fallback):", {
-           originalFile: f.filename,
-           publicUrl: fileUrl,
-         });
-         await compressImage(tmpPath, finalPath);
-         fs.unlinkSync(tmpPath);
-         fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
-       } catch (err) {
-         console.error("Image compression failed:", err);
-         const fallbackPath = path.join(uploadDir, f.filename);
-         fs.renameSync(tmpPath, fallbackPath);
-         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+           console.warn("🟡 [UPLOAD-VIDEO] Using original video (fallback):", {
+             originalFile: f.filename,
+             publicUrl: fileUrl,
+           });
+         } catch (fallbackErr) {
+           console.error("🔴 [VIDEO-FALLBACK-FAILED]", fallbackErr);
+           if (fs.existsSync(tmpPath)) {
+             try {
+               fs.unlinkSync(tmpPath);
+             } catch (cleanupErr) {
+               console.error("🔴 [VIDEO-FALLBACK-CLEANUP-FAILED]", cleanupErr);
+             }
+           }
+         }
        }
      } else {
        const tmpPath = f.path;
@@ -477,6 +441,7 @@ router.post(
            originalName: file.originalname,
            mime: file.mimetype,
            tempPath: file.path,
+           size: file.size,
          });
          await compressImage(tmpPath, finalPath);
          fs.unlinkSync(tmpPath);
@@ -485,14 +450,29 @@ router.post(
            savedAs: compressedFilename,
            publicUrl: images[images.length - 1],
          });
-         await compressImage(tmpPath, finalPath);
-         fs.unlinkSync(tmpPath);
-         images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
        } catch (err) {
-         console.error("Image compression failed:", err);
-         const fallbackPath = path.join(uploadDir, file.filename);
-         fs.renameSync(tmpPath, fallbackPath);
-         images.push(`${protocol}://${req.get("host")}/uploads/${file.filename}`);
+         console.error("🔴 [OBD-IMG-COMPRESS-ERROR]", {
+           file: file?.path,
+           error: err.message,
+         });
+         try {
+           const fallbackPath = path.join(uploadDir, file.filename);
+           fs.renameSync(tmpPath, fallbackPath);
+           images.push(`${protocol}://${req.get("host")}/uploads/${file.filename}`);
+           console.warn("🟡 [UPLOAD-OBD-IMAGE] Using original image (fallback):", {
+             originalFile: file.filename,
+             publicUrl: images[images.length - 1],
+           });
+         } catch (fallbackErr) {
+           console.error("🔴 [OBD-IMG-FALLBACK-FAILED]", fallbackErr);
+           if (fs.existsSync(tmpPath)) {
+             try {
+               fs.unlinkSync(tmpPath);
+             } catch (cleanupErr) {
+               console.error("🔴 [OBD-IMG-FALLBACK-CLEANUP-FAILED]", cleanupErr);
+             }
+           }
+         }
        }
      }
    }
