@@ -11,6 +11,7 @@ async function compressImage(inputPath, outputPath) {
   });
 
   await sharp(inputPath)
+  return sharp(inputPath)
     .rotate()
     .resize({
       width: 1600,

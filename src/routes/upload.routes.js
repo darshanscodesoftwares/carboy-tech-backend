@@ -189,7 +189,82 @@ router.post("/image", uploadImage.single("image"), async (req, res) => {
      res.status(500).json({ success: false, message: "Image processing failed" });
    }
  }
+ * POST /api/technician/uploads/image
+ * field name: image
+ */
+router.post("/image", uploadImage.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No image uploaded" });
+  }
+
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const tmpPath = req.file.path;
+
+  const compressedFilename = `compressed-${Date.now()}-${req.file.originalname.replace(
+    /\s+/g,
+    "-"
+  )}`;
+
+  const finalPath = path.join(uploadDir, compressedFilename);
+
+  try {
+    console.log("🔵 [UPLOAD-IMAGE] Checklist image received:", {
+      originalName: req.file.originalname,
+      mime: req.file.mimetype,
+      tempPath: req.file.path,
+      size: req.file.size,
+    });
+
+    // Try to compress
+    await compressImage(tmpPath, finalPath);
+
+    // Remove original file after successful compression
+    fs.unlinkSync(tmpPath);
+
+    const url = `${protocol}://${req.get(
+      "host"
+    )}/uploads/${compressedFilename}`;
+
+    console.log("🟢 [UPLOAD-IMAGE] Checklist image saved (compressed):", {
+      savedAs: compressedFilename,
+      publicUrl: url,
+    });
+
+    return res.json({ success: true, url });
+  } catch (err) {
+    console.error("🔴 [IMG-COMPRESS-ERROR]", {
+      file: req.file?.path,
+      error: err.message,
+    });
+
+    try {
+      // === FALLBACK: keep original file ===
+      const fallbackPath = path.join(uploadDir, req.file.filename);
+      fs.renameSync(tmpPath, fallbackPath);
+
+      const url = `${protocol}://${req.get(
+        "host"
+      )}/uploads/${req.file.filename}`;
+
+      console.warn("🟡 [UPLOAD-IMAGE] Using original image (fallback):", {
+        originalFile: req.file.filename,
+        publicUrl: url,
+      });
+
+      return res.json({ success: true, url });
+    } catch (fallbackErr) {
+      console.error("🔴 [IMG-FALLBACK-FAILED]", fallbackErr);
+
+      return res.status(500).json({
+        success: false,
+        message: "Image processing failed",
+      });
+    }
+  }
 });
+
 
 /**
 * POST /api/technician/uploads/audio
@@ -217,6 +292,10 @@ router.post("/video", uploadVideo.single("video"), async (req, res) => {
  if (!req.file) {
    return res.status(400).json({ success: false, message: "No video uploaded" });
  }
+
+ const tmpPath = req.file.path;
+ const finalPath = path.join(uploadDir, req.file.filename);
+ fs.renameSync(tmpPath, finalPath);
 
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
  const tmpPath = req.file.path;
@@ -368,6 +447,14 @@ router.post(
            originalFile: f.filename,
            publicUrl: fileUrl,
          });
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+       } catch (err) {
+         console.error("Image compression failed:", err);
+         const fallbackPath = path.join(uploadDir, f.filename);
+         fs.renameSync(tmpPath, fallbackPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
        }
      } else {
        const tmpPath = f.path;
@@ -398,6 +485,9 @@ router.post(
            savedAs: compressedFilename,
            publicUrl: images[images.length - 1],
          });
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
        } catch (err) {
          console.error("Image compression failed:", err);
          const fallbackPath = path.join(uploadDir, file.filename);
