@@ -160,6 +160,24 @@ router.post("/image", uploadImage.single("image"), async (req, res) => {
  const finalPath = path.join(uploadDir, compressedFilename);
 
  try {
+   console.log("🔵 [UPLOAD-IMAGE] Checklist image received:", {
+     originalName: req.file.originalname,
+     mime: req.file.mimetype,
+     tempPath: req.file.path,
+   });
+   await compressImage(tmpPath, finalPath);
+   fs.unlinkSync(tmpPath);
+   const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+   console.log("🟢 [UPLOAD-IMAGE] Checklist image saved:", {
+     savedAs: compressedFilename,
+     publicUrl: url,
+   });
+   res.json({ success: true, url });
+ } catch (err) {
+   console.error("🔴 [IMG-COMPRESS-ERROR]", {
+     file: req.file?.path,
+     error: err.message,
+   });
    await compressImage(tmpPath, finalPath);
    fs.unlinkSync(tmpPath);
    const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
@@ -258,6 +276,18 @@ router.post(
        const finalPath = path.join(uploadDir, compressedFilename);
 
        try {
+         console.log("🔵 [UPLOAD-OBD-FILE] OBD image file received:", {
+           originalName: f.originalname,
+           mime: f.mimetype,
+           tempPath: f.path,
+         });
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+         console.log("🟢 [UPLOAD-OBD-FILE] OBD image file saved:", {
+           savedAs: compressedFilename,
+           publicUrl: fileUrl,
+         });
          await compressImage(tmpPath, finalPath);
          fs.unlinkSync(tmpPath);
          fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
@@ -284,6 +314,18 @@ router.post(
        const finalPath = path.join(uploadDir, compressedFilename);
 
        try {
+         console.log("🔵 [UPLOAD-OBD-IMAGE] OBD image received:", {
+           originalName: file.originalname,
+           mime: file.mimetype,
+           tempPath: file.path,
+         });
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
+         console.log("🟢 [UPLOAD-OBD-IMAGE] OBD image saved:", {
+           savedAs: compressedFilename,
+           publicUrl: images[images.length - 1],
+         });
          await compressImage(tmpPath, finalPath);
          fs.unlinkSync(tmpPath);
          images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
