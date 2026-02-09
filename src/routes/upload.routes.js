@@ -160,24 +160,12 @@ router.post("/image", uploadImage.single("image"), async (req, res) => {
  const finalPath = path.join(uploadDir, compressedFilename);
 
  try {
-   console.log("🔵 [UPLOAD-IMAGE] Received checklist image:", {
-     originalName: req.file.originalname,
-     mime: req.file.mimetype,
-     tempPath: req.file.path,
-   });
    await compressImage(tmpPath, finalPath);
    fs.unlinkSync(tmpPath);
    const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
-   console.log("🟢 [UPLOAD-IMAGE] Final stored file:", {
-     savedAs: compressedFilename,
-     publicUrl: url,
-   });
    res.json({ success: true, url });
  } catch (err) {
-   console.error("🔴 [IMG-COMPRESS-ERROR]", {
-     file: req.file?.path,
-     error: err.message,
-   });
+   console.error("Image compression failed:", err);
    try {
      const fallbackPath = path.join(uploadDir, req.file.filename);
      fs.renameSync(tmpPath, fallbackPath);
@@ -270,18 +258,9 @@ router.post(
        const finalPath = path.join(uploadDir, compressedFilename);
 
        try {
-         console.log("🔵 [UPLOAD-OBD-FILE] Received image file:", {
-           originalName: f.originalname,
-           mime: f.mimetype,
-           tempPath: f.path,
-         });
          await compressImage(tmpPath, finalPath);
          fs.unlinkSync(tmpPath);
          fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
-         console.log("🟢 [UPLOAD-OBD-FILE] Stored compressed file:", {
-           savedAs: compressedFilename,
-           publicUrl: fileUrl,
-         });
        } catch (err) {
          console.error("Image compression failed:", err);
          const fallbackPath = path.join(uploadDir, f.filename);
@@ -305,18 +284,9 @@ router.post(
        const finalPath = path.join(uploadDir, compressedFilename);
 
        try {
-         console.log("🔵 [UPLOAD-OBD-IMAGE] Processing image:", {
-           originalName: file.originalname,
-           mime: file.mimetype,
-           tempPath: file.path,
-         });
          await compressImage(tmpPath, finalPath);
          fs.unlinkSync(tmpPath);
          images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
-         console.log("🟢 [UPLOAD-OBD-IMAGE] Stored compressed image:", {
-           savedAs: compressedFilename,
-           publicUrl: images[images.length - 1],
-         });
        } catch (err) {
          console.error("Image compression failed:", err);
          const fallbackPath = path.join(uploadDir, file.filename);
