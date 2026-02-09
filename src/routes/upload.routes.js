@@ -178,6 +178,12 @@ router.post("/image", uploadImage.single("image"), async (req, res) => {
      file: req.file?.path,
      error: err.message,
    });
+   await compressImage(tmpPath, finalPath);
+   fs.unlinkSync(tmpPath);
+   const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+   res.json({ success: true, url });
+ } catch (err) {
+   console.error("Image compression failed:", err);
    try {
      const fallbackPath = path.join(uploadDir, req.file.filename);
      fs.renameSync(tmpPath, fallbackPath);
@@ -282,6 +288,9 @@ router.post(
            savedAs: compressedFilename,
            publicUrl: fileUrl,
          });
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
        } catch (err) {
          console.error("Image compression failed:", err);
          const fallbackPath = path.join(uploadDir, f.filename);
@@ -317,6 +326,9 @@ router.post(
            savedAs: compressedFilename,
            publicUrl: images[images.length - 1],
          });
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
        } catch (err) {
          console.error("Image compression failed:", err);
          const fallbackPath = path.join(uploadDir, file.filename);
