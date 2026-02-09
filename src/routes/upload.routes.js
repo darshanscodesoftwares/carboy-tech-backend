@@ -3,18 +3,23 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { compressImage } = require("../utils/imageCompressor");
 
 // Ensure uploads directory exists
 const uploadDir = path.join(__dirname, "../../uploads");
 if (!fs.existsSync(uploadDir)) {
  fs.mkdirSync(uploadDir, { recursive: true });
 }
+const tmpUploadDir = path.join(__dirname, "../../uploads/tmp");
+if (!fs.existsSync(tmpUploadDir)) {
+ fs.mkdirSync(tmpUploadDir, { recursive: true });
+}
 
 // ==============================
 // Multer storage (shared)
 // ==============================
 const storage = multer.diskStorage({
- destination: uploadDir,
+ destination: tmpUploadDir,
  filename: (req, file, cb) => {
    const uniqueName = `${Date.now()}-${file.originalname}`;
    cb(null, uniqueName);
@@ -108,7 +113,11 @@ const documentFilter = (req, file, cb) => {
 // ==============================
 // Upload instances
 // ==============================
-const uploadImage = multer({ storage, fileFilter: imageFilter });
+const uploadImage = multer({
+ storage,
+ fileFilter: imageFilter,
+ limits: { fileSize: 10 * 1024 * 1024 },
+});
 const uploadAudio = multer({ storage, fileFilter: audioFilter });
 const uploadVideo = multer({ storage, fileFilter: videoFilter });
 const uploadDocument = multer({ storage, fileFilter: documentFilter });
@@ -140,14 +149,33 @@ const uploadOBD = multer({
 * POST /api/technician/uploads/image
 * field name: image
 */
-router.post("/image", uploadImage.single("image"), (req, res) => {
+router.post("/image", uploadImage.single("image"), async (req, res) => {
  if (!req.file) {
    return res.status(400).json({ success: false, message: "No image uploaded" });
  }
 
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
- const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
- res.json({ success: true, url });
+ const tmpPath = req.file.path;
+ const compressedFilename = `compressed-${Date.now()}-${req.file.originalname.replace(/\s+/g, "-")}`;
+ const finalPath = path.join(uploadDir, compressedFilename);
+
+ try {
+   await compressImage(tmpPath, finalPath);
+   fs.unlinkSync(tmpPath);
+   const url = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+   res.json({ success: true, url });
+ } catch (err) {
+   console.error("Image compression failed:", err);
+   try {
+     const fallbackPath = path.join(uploadDir, req.file.filename);
+     fs.renameSync(tmpPath, fallbackPath);
+     const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+     res.json({ success: true, url });
+   } catch (fallbackErr) {
+     console.error("Image fallback failed:", fallbackErr);
+     res.status(500).json({ success: false, message: "Image processing failed" });
+   }
+ }
 });
 
 /**
@@ -158,6 +186,10 @@ router.post("/audio", uploadAudio.single("audio"), (req, res) => {
  if (!req.file) {
    return res.status(400).json({ success: false, message: "No audio uploaded" });
  }
+
+ const tmpPath = req.file.path;
+ const finalPath = path.join(uploadDir, req.file.filename);
+ fs.renameSync(tmpPath, finalPath);
 
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
@@ -173,6 +205,10 @@ router.post("/video", uploadVideo.single("video"), (req, res) => {
    return res.status(400).json({ success: false, message: "No video uploaded" });
  }
 
+ const tmpPath = req.file.path;
+ const finalPath = path.join(uploadDir, req.file.filename);
+ fs.renameSync(tmpPath, finalPath);
+
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
  res.json({ success: true, url });
@@ -186,6 +222,10 @@ router.post("/document", uploadDocument.single("document"), (req, res) => {
  if (!req.file) {
    return res.status(400).json({ success: false, message: "No document uploaded" });
  }
+
+ const tmpPath = req.file.path;
+ const finalPath = path.join(uploadDir, req.file.filename);
+ fs.renameSync(tmpPath, finalPath);
 
  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
  const url = `${protocol}://${req.get("host")}/uploads/${req.file.filename}`;
@@ -205,18 +245,56 @@ router.post(
    { name: "file", maxCount: 1 },
    { name: "images", maxCount: 10 },
  ]),
- (req, res) => {
+ async (req, res) => {
    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
 
-   const fileUrl = req.files?.file?.[0]
-     ? `${protocol}://${req.get("host")}/uploads/${req.files.file[0].filename}`
-     : null;
+   let fileUrl = null;
 
-   const images = req.files?.images
-     ? req.files.images.map(
-         (f) => `${protocol}://${req.get("host")}/uploads/${f.filename}`
-       )
-     : [];
+   if (req.files?.file?.[0]) {
+     const f = req.files.file[0];
+     if (f.mimetype.startsWith("image/")) {
+       const tmpPath = f.path;
+       const compressedFilename = `compressed-${Date.now()}-${f.originalname.replace(/\s+/g, "-")}`;
+       const finalPath = path.join(uploadDir, compressedFilename);
+
+       try {
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
+       } catch (err) {
+         console.error("Image compression failed:", err);
+         const fallbackPath = path.join(uploadDir, f.filename);
+         fs.renameSync(tmpPath, fallbackPath);
+         fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+       }
+     } else {
+       const tmpPath = f.path;
+       const finalPath = path.join(uploadDir, f.filename);
+       fs.renameSync(tmpPath, finalPath);
+       fileUrl = `${protocol}://${req.get("host")}/uploads/${f.filename}`;
+     }
+   }
+
+   let images = [];
+
+   if (req.files?.images) {
+     for (const file of req.files.images) {
+       const tmpPath = file.path;
+       const compressedFilename = `compressed-${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`;
+       const finalPath = path.join(uploadDir, compressedFilename);
+
+       try {
+         await compressImage(tmpPath, finalPath);
+         fs.unlinkSync(tmpPath);
+         images.push(`${protocol}://${req.get("host")}/uploads/${compressedFilename}`);
+       } catch (err) {
+         console.error("Image compression failed:", err);
+         const fallbackPath = path.join(uploadDir, file.filename);
+         fs.renameSync(tmpPath, fallbackPath);
+         images.push(`${protocol}://${req.get("host")}/uploads/${file.filename}`);
+       }
+     }
+   }
 
    const { url } = req.body; // web OBD report link
 
@@ -249,4 +327,3 @@ router.use((err, req, res, next) => {
 
 
 module.exports = router;
-
