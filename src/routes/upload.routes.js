@@ -15,6 +15,10 @@ const tmpUploadDir = path.join(__dirname, "../../uploads/tmp");
 if (!fs.existsSync(tmpUploadDir)) {
  fs.mkdirSync(tmpUploadDir, { recursive: true });
 }
+const chunkDir = path.join(__dirname, "../../uploads/tmp/chunks");
+if (!fs.existsSync(chunkDir)) {
+ fs.mkdirSync(chunkDir, { recursive: true });
+}
 
 // ==============================
 // Multer storage (shared)
