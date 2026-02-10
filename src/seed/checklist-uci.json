@@ -403,6 +403,12 @@
           ]
         },
         {
+          "key": "car_left_image",
+          "label": "Car left image",
+          "inputType": "image",
+          "requiresPhoto": true
+        },
+        {
           "key": "mirror_assembly_left",
           "label": "Mirror Assembly Left",
           "inputType": "select",
@@ -842,12 +848,6 @@
           "key": "car_right_image",
           "label": "Car Right Image",
           "inputType": "image"
-        },
-        {
-          "key": "car_left_image",
-          "label": "Car left image",
-          "inputType": "image",
-          "requiresPhoto": true
         }
       ]
     },
