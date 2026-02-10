@@ -6,6 +6,7 @@ const app = express();
 app.set("trust proxy", 1);
 
 const uploadRoutes = require("./routes/upload.routes");
+const chunkUploadRoutes = require("./routes/chunkUpload.routes");
 
 /* ================= CORS CONFIG (CLEAN FIX) ================= */
 
@@ -62,6 +63,7 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/technician/uploads", uploadRoutes);
+app.use("/api/technician/uploads", chunkUploadRoutes);
 
 /* ================= SWAGGER ================= */
 
