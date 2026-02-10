@@ -62,8 +62,9 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 /* ================= STATIC ================= */
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-app.use("/api/technician/uploads", uploadRoutes);
 app.use("/api/technician/uploads", chunkUploadRoutes);
+app.use("/api/technician/uploads", uploadRoutes);
+
 
 /* ================= SWAGGER ================= */
 
