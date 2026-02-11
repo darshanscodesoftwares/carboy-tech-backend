@@ -361,13 +361,13 @@
           "key": "fog_lamp_right",
           "label": "Fog lamp right",
           "inputType": "radio",
-          "options": ["Normal", "Scratched", "Not working"]
+          "options": ["Normal", "Scratched", "Not working", "Not available"]
         },
         {
           "key": "fog_lamp_left",
           "label": "Fog lamp left",
           "inputType": "radio",
-          "options": ["Normal", "Scratched", "Not working"]
+          "options": ["Normal", "Scratched", "Not working", "Not available"]
         },
         {
           "key": "front_bumper_grill",
@@ -771,6 +771,7 @@
           "inputType": "radio",
           "options": ["Working normal", "Defective"]
         },
+        
 
         {
           "key": "cluster_meter_image",
@@ -793,25 +794,25 @@
           "key": "individual_speakers",
           "label": "Individual speakers",
           "inputType": "radio",
-          "options": ["Working normal", "Defective"]
+          "options": ["Working normal", "Defective", "Audio system not available"]
         },
         {
           "key": "audio_system_touch",
           "label": "Audio system touch",
           "inputType": "radio",
-          "options": ["Working normal", "Defective"]
+          "options": ["Working normal", "Defective", "Audio system not available"]
         },
         {
           "key": "audio_system_mode",
           "label": "Audio system mode",
           "inputType": "radio",
-          "options": ["Working normal", "Defective"]
+          "options": ["Working normal", "Defective", "Audio system not available"]
         },
         {
           "key": "voice_assist_mode",
           "label": "Voice assist mode",
           "inputType": "radio",
-          "options": ["Working normal", "Defective"]
+          "options": ["Working normal", "Defective", "Not available"]
         },
         {
           "key": "ac_cooling",
@@ -955,7 +956,7 @@
           "key": "remote_key_working",
           "label": "Remote key working",
           "inputType": "radio",
-          "options": ["Normal", "Not working", "Battery weak"]
+          "options": ["Normal", "Not working", "Battery weak", "Remote key not available"]
         },
         {
           "key": "manual_key_operation",
