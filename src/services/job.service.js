@@ -330,6 +330,56 @@ const checklistRepository = require("../repositories/checklist.repository");
 const inspectionRepository = require("../repositories/inspection.repository");
 const technicianRepository = require("../repositories/technician.repository");
 
+const toUniqueOrderedUrls = (urls = []) => {
+  const seen = new Set();
+  const ordered = [];
+
+  urls.forEach((url) => {
+    if (typeof url !== "string") return;
+    const normalized = url.trim();
+    if (!normalized || seen.has(normalized)) return;
+
+    seen.add(normalized);
+    ordered.push(normalized);
+  });
+
+  return ordered;
+};
+
+const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
+  const existingUrls = Array.isArray(existingAnswer.photoUrls)
+    ? existingAnswer.photoUrls
+    : existingAnswer.photoUrl
+      ? [existingAnswer.photoUrl]
+      : [];
+
+  const incomingUrls = Array.isArray(incomingAnswer.photoUrls)
+    ? incomingAnswer.photoUrls
+    : incomingAnswer.photoUrl
+      ? [incomingAnswer.photoUrl]
+      : [];
+
+  const hasIncomingPhotoField =
+    Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls") ||
+    Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
+
+  if (!hasIncomingPhotoField) {
+    return {
+      ...incomingAnswer,
+      photoUrls: toUniqueOrderedUrls(existingUrls),
+      photoUrl: existingAnswer.photoUrl || null,
+    };
+  }
+
+  const mergedPhotoUrls = toUniqueOrderedUrls([...existingUrls, ...incomingUrls]);
+
+  return {
+    ...incomingAnswer,
+    photoUrls: mergedPhotoUrls,
+    photoUrl: mergedPhotoUrls[0] || null,
+  };
+};
+
 module.exports = {
   // =====================================================
   // LIST JOBS
@@ -416,12 +466,25 @@ module.exports = {
   // SAVE / UPDATE CHECKPOINT ANSWER (ATOMIC)
   // =====================================================
   async submitCheckpoint(jobId, answer) {
+    const jobDetails = await jobRepository.findById(jobId);
+    if (!jobDetails) throw new Error("Job not found");
+
+    const existingAnswer = (jobDetails.checklistAnswers || []).find(
+      (item) => item.checkpointKey === answer.checkpointKey,
+    );
+
+    const normalizedAnswer = normalizeAnswerPhotos(existingAnswer, answer);
+
     // Try to update existing checkpoint atomically
-    let job = await jobRepository.updateCheckpoint(jobId, answer.checkpointKey, answer);
+    let job = await jobRepository.updateCheckpoint(
+      jobId,
+      answer.checkpointKey,
+      normalizedAnswer,
+    );
 
     // If checkpoint doesn't exist, add it atomically
     if (!job) {
-      job = await jobRepository.addCheckpoint(jobId, answer);
+      job = await jobRepository.addCheckpoint(jobId, normalizedAnswer);
     }
 
     if (!job) throw new Error("Job not found");
