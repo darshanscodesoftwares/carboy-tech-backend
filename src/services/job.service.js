@@ -330,54 +330,54 @@ const checklistRepository = require("../repositories/checklist.repository");
 const inspectionRepository = require("../repositories/inspection.repository");
 const technicianRepository = require("../repositories/technician.repository");
 
-const toUniqueOrderedUrls = (urls = []) => {
-  const seen = new Set();
-  const ordered = [];
-
-  urls.forEach((url) => {
-    if (typeof url !== "string") return;
-    const normalized = url.trim();
-    if (!normalized || seen.has(normalized)) return;
-
-    seen.add(normalized);
-    ordered.push(normalized);
-  });
-
-  return ordered;
-};
-
 const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
-  const existingUrls = Array.isArray(existingAnswer.photoUrls)
-    ? existingAnswer.photoUrls
-    : existingAnswer.photoUrl
-      ? [existingAnswer.photoUrl]
-      : [];
+  const hasPhotoUrls = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls");
+  const hasPhotoUrl = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
 
-  const incomingUrls = Array.isArray(incomingAnswer.photoUrls)
-    ? incomingAnswer.photoUrls
-    : incomingAnswer.photoUrl
-      ? [incomingAnswer.photoUrl]
-      : [];
+  const uniqueCleanUrls = Array.isArray(incomingAnswer.photoUrls)
+    ? [...new Set(incomingAnswer.photoUrls.map((url) => `${url || ""}`.trim()).filter(Boolean))]
+    : [];
 
-  const hasIncomingPhotoField =
-    Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls") ||
-    Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
+  const cleanedSingleUrl = `${incomingAnswer.photoUrl || ""}`.trim() || null;
 
-  if (!hasIncomingPhotoField) {
+  // If frontend did not send photo fields → keep existing
+  if (!hasPhotoUrls && !hasPhotoUrl) {
     return {
       ...incomingAnswer,
-      photoUrls: toUniqueOrderedUrls(existingUrls),
+      photoUrls: existingAnswer.photoUrls || null,
       photoUrl: existingAnswer.photoUrl || null,
     };
   }
 
-  const mergedPhotoUrls = toUniqueOrderedUrls([...existingUrls, ...incomingUrls]);
+  // If both fields are sent but photoUrls is an empty/default array,
+  // fallback to photoUrl so single-image uploads keep working.
+  if (hasPhotoUrls && hasPhotoUrl && !uniqueCleanUrls.length) {
+    return {
+      ...incomingAnswer,
+      photoUrl: cleanedSingleUrl,
+      photoUrls: cleanedSingleUrl ? [cleanedSingleUrl] : [],
+    };
+  }
 
-  return {
-    ...incomingAnswer,
-    photoUrls: mergedPhotoUrls,
-    photoUrl: mergedPhotoUrls[0] || null,
-  };
+  // Multi-image case → full replace
+  if (hasPhotoUrls) {
+    return {
+      ...incomingAnswer,
+      photoUrls: uniqueCleanUrls,
+      photoUrl: uniqueCleanUrls.length ? uniqueCleanUrls[0] : null,
+    };
+  }
+
+  // Single-image case → full replace
+  if (hasPhotoUrl) {
+    return {
+      ...incomingAnswer,
+      photoUrl: cleanedSingleUrl,
+      photoUrls: cleanedSingleUrl ? [cleanedSingleUrl] : [],
+    };
+  }
+
+  return incomingAnswer;
 };
 
 module.exports = {
