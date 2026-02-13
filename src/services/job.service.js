@@ -334,12 +334,6 @@ const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
   const hasPhotoUrls = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls");
   const hasPhotoUrl = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
 
-  const uniqueCleanUrls = Array.isArray(incomingAnswer.photoUrls)
-    ? [...new Set(incomingAnswer.photoUrls.map((url) => `${url || ""}`.trim()).filter(Boolean))]
-    : [];
-
-  const cleanedSingleUrl = `${incomingAnswer.photoUrl || ""}`.trim() || null;
-
   // If frontend did not send photo fields → keep existing
   if (!hasPhotoUrls && !hasPhotoUrl) {
     return {
@@ -349,22 +343,16 @@ const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
     };
   }
 
-  // If both fields are sent but photoUrls is an empty/default array,
-  // fallback to photoUrl so single-image uploads keep working.
-  if (hasPhotoUrls && hasPhotoUrl && !uniqueCleanUrls.length) {
-    return {
-      ...incomingAnswer,
-      photoUrl: cleanedSingleUrl,
-      photoUrls: cleanedSingleUrl ? [cleanedSingleUrl] : [],
-    };
-  }
-
   // Multi-image case → full replace
   if (hasPhotoUrls) {
+    const cleaned = Array.isArray(incomingAnswer.photoUrls)
+      ? incomingAnswer.photoUrls.filter(Boolean)
+      : [];
+
     return {
       ...incomingAnswer,
-      photoUrls: uniqueCleanUrls,
-      photoUrl: uniqueCleanUrls.length ? uniqueCleanUrls[0] : null,
+      photoUrls: cleaned,
+      photoUrl: cleaned.length ? cleaned[0] : null,
     };
   }
 
@@ -372,8 +360,8 @@ const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
   if (hasPhotoUrl) {
     return {
       ...incomingAnswer,
-      photoUrl: cleanedSingleUrl,
-      photoUrls: cleanedSingleUrl ? [cleanedSingleUrl] : [],
+      photoUrl: incomingAnswer.photoUrl || null,
+      photoUrls: incomingAnswer.photoUrl ? [incomingAnswer.photoUrl] : [],
     };
   }
 
