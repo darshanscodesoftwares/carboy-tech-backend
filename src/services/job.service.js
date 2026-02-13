@@ -330,54 +330,42 @@ const checklistRepository = require("../repositories/checklist.repository");
 const inspectionRepository = require("../repositories/inspection.repository");
 const technicianRepository = require("../repositories/technician.repository");
 
-const toUniqueOrderedUrls = (urls = []) => {
-  const seen = new Set();
-  const ordered = [];
-
-  urls.forEach((url) => {
-    if (typeof url !== "string") return;
-    const normalized = url.trim();
-    if (!normalized || seen.has(normalized)) return;
-
-    seen.add(normalized);
-    ordered.push(normalized);
-  });
-
-  return ordered;
-};
-
 const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
-  const existingUrls = Array.isArray(existingAnswer.photoUrls)
-    ? existingAnswer.photoUrls
-    : existingAnswer.photoUrl
-      ? [existingAnswer.photoUrl]
-      : [];
+  const hasPhotoUrls = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls");
+  const hasPhotoUrl = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
 
-  const incomingUrls = Array.isArray(incomingAnswer.photoUrls)
-    ? incomingAnswer.photoUrls
-    : incomingAnswer.photoUrl
-      ? [incomingAnswer.photoUrl]
-      : [];
-
-  const hasIncomingPhotoField =
-    Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls") ||
-    Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
-
-  if (!hasIncomingPhotoField) {
+  // If frontend did not send photo fields → keep existing
+  if (!hasPhotoUrls && !hasPhotoUrl) {
     return {
       ...incomingAnswer,
-      photoUrls: toUniqueOrderedUrls(existingUrls),
+      photoUrls: existingAnswer.photoUrls || null,
       photoUrl: existingAnswer.photoUrl || null,
     };
   }
 
-  const mergedPhotoUrls = toUniqueOrderedUrls([...existingUrls, ...incomingUrls]);
+  // Multi-image case → full replace
+  if (hasPhotoUrls) {
+    const cleaned = Array.isArray(incomingAnswer.photoUrls)
+      ? incomingAnswer.photoUrls.filter(Boolean)
+      : [];
 
-  return {
-    ...incomingAnswer,
-    photoUrls: mergedPhotoUrls,
-    photoUrl: mergedPhotoUrls[0] || null,
-  };
+    return {
+      ...incomingAnswer,
+      photoUrls: cleaned,
+      photoUrl: cleaned.length ? cleaned[0] : null,
+    };
+  }
+
+  // Single-image case → full replace
+  if (hasPhotoUrl) {
+    return {
+      ...incomingAnswer,
+      photoUrl: incomingAnswer.photoUrl || null,
+      photoUrls: incomingAnswer.photoUrl ? [incomingAnswer.photoUrl] : [],
+    };
+  }
+
+  return incomingAnswer;
 };
 
 module.exports = {
