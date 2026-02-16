@@ -334,39 +334,39 @@ const normalizeAnswerPhotos = (existingAnswer = {}, incomingAnswer = {}) => {
   const hasPhotoUrls = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrls");
   const hasPhotoUrl = Object.prototype.hasOwnProperty.call(incomingAnswer, "photoUrl");
 
-  // If frontend did not send photo fields → keep existing
-  if (!hasPhotoUrls && !hasPhotoUrl) {
-    return {
-      ...incomingAnswer,
-      photoUrls: existingAnswer.photoUrls || null,
-      photoUrl: existingAnswer.photoUrl || null,
-    };
-  }
-
-  // Multi-image case → full replace
-  if (hasPhotoUrls) {
-    const cleaned = Array.isArray(incomingAnswer.photoUrls)
-      ? incomingAnswer.photoUrls.filter(Boolean)
+  // 🔹 Start from existing state
+  let finalPhotoUrls = Array.isArray(existingAnswer.photoUrls)
+    ? existingAnswer.photoUrls
+    : existingAnswer.photoUrl
+      ? [existingAnswer.photoUrl]
       : [];
 
-    return {
-      ...incomingAnswer,
-      photoUrls: cleaned,
-      photoUrl: cleaned.length ? cleaned[0] : null,
-    };
+  // =========================
+  // 🔥 If frontend sends photoUrls → FULL REPLACE
+  // =========================
+  if (hasPhotoUrls) {
+    finalPhotoUrls = Array.isArray(incomingAnswer.photoUrls)
+      ? incomingAnswer.photoUrls.filter(Boolean)
+      : [];
   }
 
-  // Single-image case → full replace
-  if (hasPhotoUrl) {
-    return {
-      ...incomingAnswer,
-      photoUrl: incomingAnswer.photoUrl || null,
-      photoUrls: incomingAnswer.photoUrl ? [incomingAnswer.photoUrl] : [],
-    };
+  // =========================
+  // 🔥 If frontend sends single photoUrl → convert to array
+  // =========================
+  if (!hasPhotoUrls && hasPhotoUrl) {
+    finalPhotoUrls = incomingAnswer.photoUrl
+      ? [incomingAnswer.photoUrl]
+      : [];
   }
 
-  return incomingAnswer;
+  return {
+    ...incomingAnswer,
+    photoUrls: finalPhotoUrls,
+    photoUrl: finalPhotoUrls[0] || null, // backward compatibility
+  };
 };
+
+
 
 module.exports = {
   // =====================================================
@@ -453,32 +453,70 @@ module.exports = {
   // =====================================================
   // SAVE / UPDATE CHECKPOINT ANSWER (ATOMIC)
   // =====================================================
+  // async submitCheckpoint(jobId, answer) {
+  //   const jobDetails = await jobRepository.findById(jobId);
+  //   if (!jobDetails) throw new Error("Job not found");
+
+  //   const existingAnswer = (jobDetails.checklistAnswers || []).find(
+  //     (item) => item.checkpointKey === answer.checkpointKey,
+  //   );
+
+  //   const normalizedAnswer = normalizeAnswerPhotos(existingAnswer, answer);
+
+  //   // Try to update existing checkpoint atomically
+  //   let job = await jobRepository.updateCheckpoint(
+  //     jobId,
+  //     answer.checkpointKey,
+  //     normalizedAnswer,
+  //   );
+
+  //   // If checkpoint doesn't exist, add it atomically
+  //   if (!job) {
+  //     job = await jobRepository.addCheckpoint(jobId, normalizedAnswer);
+  //   }
+
+  //   if (!job) throw new Error("Job not found");
+
+  //   return job;
+  // },
+
   async submitCheckpoint(jobId, answer) {
-    const jobDetails = await jobRepository.findById(jobId);
-    if (!jobDetails) throw new Error("Job not found");
+  const jobDetails = await jobRepository.findById(jobId);
+  if (!jobDetails) throw new Error("Job not found");
 
-    const existingAnswer = (jobDetails.checklistAnswers || []).find(
-      (item) => item.checkpointKey === answer.checkpointKey,
-    );
+  const existingAnswer = (jobDetails.checklistAnswers || []).find(
+    (item) => item.checkpointKey === answer.checkpointKey,
+  ) || {};
 
-    const normalizedAnswer = normalizeAnswerPhotos(existingAnswer, answer);
+  const normalizedAnswer = normalizeAnswerPhotos(existingAnswer, answer);
 
-    // Try to update existing checkpoint atomically
-    let job = await jobRepository.updateCheckpoint(
-      jobId,
-      answer.checkpointKey,
-      normalizedAnswer,
-    );
-
-    // If checkpoint doesn't exist, add it atomically
-    if (!job) {
-      job = await jobRepository.addCheckpoint(jobId, normalizedAnswer);
+  // 🔥 FORCE FULL OBJECT REPLACEMENT
+  let job = await jobRepository.updateCheckpoint(
+    jobId,
+    answer.checkpointKey,
+    {
+      checkpointKey: answer.checkpointKey,
+      selectedOption: normalizedAnswer.selectedOption ?? null,
+      value: normalizedAnswer.value ?? null,
+      notes: normalizedAnswer.notes ?? null,
+      photoUrl: normalizedAnswer.photoUrl ?? null,
+      photoUrls: normalizedAnswer.photoUrls ?? [],
     }
+  );
 
-    if (!job) throw new Error("Job not found");
+  if (!job) {
+    job = await jobRepository.addCheckpoint(jobId, {
+      checkpointKey: answer.checkpointKey,
+      selectedOption: normalizedAnswer.selectedOption ?? null,
+      value: normalizedAnswer.value ?? null,
+      notes: normalizedAnswer.notes ?? null,
+      photoUrl: normalizedAnswer.photoUrl ?? null,
+      photoUrls: normalizedAnswer.photoUrls ?? [],
+    });
+  }
 
-    return job;
-  },
+  return job;
+},
 
   // =====================================================
   // COMPLETE INSPECTION (NO ADMIN VISIBILITY YET)
