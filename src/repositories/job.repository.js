@@ -56,7 +56,7 @@ module.exports = {
       { $set: { "checklistAnswers.$": answer } },
       { new: true },
     );
-  },
+  }, 
 
   // atomic checkpoint add (if not exists)
   async addCheckpoint(jobId, answer) {

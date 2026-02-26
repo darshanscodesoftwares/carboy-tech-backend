@@ -94,6 +94,12 @@ const JobSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    // customer requirements / notes from admin
+    customerRequirements: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
