@@ -80,3 +80,5 @@ Thumbs.db
 *.swp
 
 uploads
+
+src/seed/checklist-uci.json
