@@ -396,6 +396,11 @@ module.exports = {
   // UPDATE STATUS
   // =====================================================
   async updateStatus(jobId, status) {
+    // track inspection duration timestamps
+    if (status === "in_inspection") {
+      await jobRepository.updateById(jobId, { inspectionStartedAt: new Date() });
+    }
+
     const job = await jobRepository.updateStatus(jobId, status);
     await technicianRepository.updateStatus(job.technician, status);
     return job;
@@ -527,7 +532,8 @@ module.exports = {
 
   await jobRepository.updateById(jobId, {
     status: "completed",
-    technicianRemarks: remarks || "",   // 🔥 ADD THIS
+    technicianRemarks: remarks || "",
+    inspectionCompletedAt: new Date(),
   });
 
   await technicianRepository.updateStatus(job.technician, "completed");

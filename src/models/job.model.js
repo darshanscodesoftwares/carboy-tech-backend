@@ -100,6 +100,10 @@ const JobSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    // inspection duration tracking
+    inspectionStartedAt: { type: Date, default: null },
+    inspectionCompletedAt: { type: Date, default: null },
   },
   {
     timestamps: true,
