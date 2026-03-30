@@ -520,6 +520,22 @@ module.exports = {
     });
   }
 
+  // Sync vehicleSnapshot when vehicle fields are edited
+  const VEHICLE_SNAPSHOT_MAP = {
+    car_make: 'brand',
+    car_model: 'model',
+    make_model_year: 'year',
+  };
+  const snapshotField = VEHICLE_SNAPSHOT_MAP[answer.checkpointKey];
+  if (snapshotField && answer.value) {
+    const val = snapshotField === 'year' ? Number(answer.value) : answer.value;
+    if (snapshotField !== 'year' || !isNaN(val)) {
+      job = await jobRepository.updateById(jobId, {
+        [`vehicleSnapshot.${snapshotField}`]: val,
+      });
+    }
+  }
+
   return job;
 },
 
