@@ -20,17 +20,29 @@ const TechnicianSchema = new mongoose.Schema({
   // Current status in the job flow
   status: {
     type: String,
-    enum: ['idle', 'assigned', 'traveling', 'reached', 'in_inspection', 'completed'],
-    default: 'idle'
+    enum: ['available', 'busy', 'offline', 'idle', 'assigned', 'traveling', 'reached', 'in_inspection', 'completed'],
+    default: 'available'
   },
 
-  // optional: track technician's locations (future)
+  district: { type: String, default: '' },
+  isActive: { type: Boolean, default: true },
+  assignedJobs: { type: Number, default: 0 },
+  completedJobs: { type: Number, default: 0 },
+  rating: { type: Number, default: 0 },
+  plainPassword: { type: String, default: '', select: false },
+
+  currentLocation: {
+    type: { type: String, enum: ['Point'], default: 'Point' },
+    coordinates: { type: [Number], default: [0, 0] },
+    address: { type: String, default: '' },
+  },
+
+  // legacy field (tech backend original)
   location: {
     lat: Number,
     lng: Number
   },
 
-  // optional: admin notes
   notes: [{ type: String }]
 }, {
   timestamps: true
