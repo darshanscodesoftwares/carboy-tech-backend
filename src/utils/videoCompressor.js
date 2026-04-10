@@ -12,11 +12,12 @@ async function compressVideo(inputPath, outputPath) {
     ffmpeg(inputPath)
       .outputOptions([
         "-vcodec libx264",
-        "-crf 28",
-        "-preset fast",
+        "-crf 30",
+        "-preset veryfast",
         "-movflags +faststart",
+        "-threads 1",
       ])
-      .size("1280x?")
+      .size("960x?")
       .save(outputPath)
       .on("end", () => {
         console.log("🟢 [VIDEO-COMPRESS-SUCCESS]", { output: outputPath });

@@ -4,7 +4,6 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { compressImage } = require("../utils/imageCompressor");
-const { compressVideo } = require("../utils/videoCompressor");
 
 const uploadDir = path.join(__dirname, "../../uploads");
 const tmpDir = path.join(__dirname, "../../uploads/tmp");
@@ -119,12 +118,13 @@ router.post("/chunk", upload.single("chunk"), async (req, res) => {
       if (fileType === "image") {
         console.log("🟡 [IMG-COMPRESS-START]", { file: mergedPath });
         await compressImage(mergedPath, finalPath);
+        fs.unlinkSync(mergedPath);
       } else if (fileType === "video") {
-        console.log("🟡 [VIDEO-COMPRESS-START]", { file: mergedPath });
-        await compressVideo(mergedPath, finalPath);
+        // Skip compression for chunked videos — just move directly
+        // This prevents 361MB ffmpeg spike + timeout on slow connections
+        console.log("🟡 [VIDEO-SKIP-COMPRESS]", { file: mergedPath, reason: "chunked upload" });
+        fs.renameSync(mergedPath, finalPath);
       }
-
-      fs.unlinkSync(mergedPath);
 
       const publicUrl = `${protocol}://${req.get("host")}/uploads/${compressedFilename}`;
 
