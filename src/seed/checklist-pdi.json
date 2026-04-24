@@ -194,7 +194,7 @@
           "key": "turbo_image",
           "label": "Turbo image",
           "inputType": "image",
-          "requiresPhoto": true
+          "optional": true
         },
         {
           "key": "abs_status",
