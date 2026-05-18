@@ -13,4 +13,7 @@ router.use('/technician', require('./technician.routes'));
 // UPLOAD ROUTES
 router.use('/upload', require('./upload.routes'));
 
+// ATTENDANCE ROUTES
+router.use('/technician/attendance', require('./attendance.routes'));
+
 module.exports = router;
