@@ -373,7 +373,25 @@ module.exports = {
   // LIST JOBS
   // =====================================================
   async listByTechnician(technicianId, status) {
-    return jobRepository.findByTechnician(technicianId, status);
+    const jobs = await jobRepository.findByTechnician(technicianId, status);
+    if (!jobs.length) return jobs;
+
+    // Enrich each job with ieDenial from InspectionRequest (same shared DB)
+    const mongoose = require('mongoose');
+    let InspectionRequest;
+    try {
+      InspectionRequest = mongoose.model('InspectionRequest');
+    } catch {
+      const schema = new mongoose.Schema({ adminJobId: mongoose.Schema.Types.ObjectId, ieDenial: mongoose.Schema.Types.Mixed }, { strict: false });
+      InspectionRequest = mongoose.model('InspectionRequest', schema);
+    }
+    const jobIds = jobs.map((j) => j._id);
+    const requests = await InspectionRequest.find({ adminJobId: { $in: jobIds } }).select('adminJobId ieDenial').lean();
+    const denialMap = {};
+    for (const r of requests) {
+      if (r.adminJobId) denialMap[String(r.adminJobId)] = r.ieDenial || null;
+    }
+    return jobs.map((j) => ({ ...j, ieDenial: denialMap[String(j._id)] || null }));
   },
 
   // =====================================================
