@@ -44,4 +44,23 @@ router.post('/:jobId/selfie', authTechnician, upload.single('selfie'), async (re
   }
 });
 
+// POST /api/technician/jobs/:jobId/ie-denial — forward denial to admin-backend
+router.post('/:jobId/ie-denial', authTechnician, async (req, res) => {
+  const { jobId } = req.params;
+  const { reason, note } = req.body;
+  try {
+    if (!reason) return res.status(400).json({ success: false, message: 'reason is required' });
+    const adminUrl = `${process.env.ADMIN_BACKEND_URL || 'http://localhost:5000'}`;
+    const response = await axios.patch(
+      `${adminUrl}/api/admin/jobs/${jobId}/ie-denial`,
+      { reason, note },
+      { timeout: 10000 }
+    );
+    return res.json({ success: true, data: response.data?.data });
+  } catch (err) {
+    const status = err.response?.status || 500;
+    return res.status(status).json({ success: false, message: err.response?.data?.message || 'Failed to record denial' });
+  }
+});
+
 module.exports = router;
