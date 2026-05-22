@@ -49,6 +49,12 @@ const InspectionReportSchema = new mongoose.Schema({
     severity: { type: String, enum: ['low', 'medium', 'high'] }
   }],
 
+  // sections disabled by technician (e.g. Test Drive skipped)
+  disabledSections: [{
+    section: String,
+    remark: String,
+  }],
+
   // when technician clicks "Send Report"
   submittedAt: {
     type: Date,

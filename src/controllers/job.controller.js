@@ -134,12 +134,9 @@ module.exports = {
   async sendReport(req, res, next) {
     try {
       const jobId = req.params.jobId;
-      const { remarks } = req.body || {};
+      const { remarks, disabledSections } = req.body || {};
 
-      // ✅ ADD THIS LINE
-      console.log("🟢 Tech BE controller received remarks:", remarks);
-
-      const job = await jobService.sendReport(jobId, remarks);
+      const job = await jobService.sendReport(jobId, remarks, disabledSections);
       return response.success(res, job);
     } catch (err) {
       next(err);

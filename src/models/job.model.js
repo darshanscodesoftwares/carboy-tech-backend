@@ -101,6 +101,12 @@ const JobSchema = new mongoose.Schema(
       default: "",
     },
 
+    // sections disabled by technician (e.g. Test Drive skipped)
+    disabledSections: [{
+      section: String,
+      remark: String,
+    }],
+
     // inspection duration tracking
     inspectionStartedAt: { type: Date, default: null },
     inspectionCompletedAt: { type: Date, default: null },

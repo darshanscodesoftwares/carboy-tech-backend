@@ -594,7 +594,7 @@ async updateTechnicianRemarks(jobId, remarks = "") {
   // =====================================================
   // SEND REPORT TO ADMIN (🔥 CRITICAL FIX 🔥)
   // =====================================================
-  async sendReport(jobId, remarks = "") {
+  async sendReport(jobId, remarks = "", disabledSections = []) {
     const job = await jobRepository.findById(jobId);
     if (!job) throw new Error("Job not found");
 
@@ -615,6 +615,7 @@ async updateTechnicianRemarks(jobId, remarks = "") {
     const reportPayload = {
       checklistAnswers: dedupedAnswers,
       technicianRemarks: remarks || "",
+      disabledSections: Array.isArray(disabledSections) ? disabledSections : [],
       submittedAt: new Date(),
     };
 
@@ -634,7 +635,14 @@ async updateTechnicianRemarks(jobId, remarks = "") {
       inspectionReport: report._id,
       status: "report_sent",
       technicianRemarks: remarks || "",
+      disabledSections: Array.isArray(disabledSections) ? disabledSections : [],
     });
+
+    // Fire admin notification (fire-and-forget)
+    const axios = require("axios");
+    const adminUrl = process.env.ADMIN_BACKEND_URL || "http://localhost:5000";
+    axios.post(`${adminUrl}/api/admin/jobs/${job._id}/notify-report`, {}, { timeout: 5000 })
+      .catch((err) => console.error("[notify-report] Failed:", err.message));
 
     return {
       jobId: job._id,
