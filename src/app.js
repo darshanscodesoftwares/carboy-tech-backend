@@ -16,6 +16,8 @@ const allowedOrigins = [
   "http://localhost:5175",
   "http://localhost:5176",
   "http://192.168.29.166:5175",
+  "http://192.168.29.63:5174",
+  "http://10.52.122.93:5175",
   "https://carboy-tech-frontend.onrender.com",
   "https://carboy-admin-frontend.onrender.com",
   "https://tech-api.mycarboy.in"
